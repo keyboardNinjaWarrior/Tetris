@@ -9,7 +9,7 @@
 #define	SCREEN_HEIGHT		22
 #define	GAME_WIDTH			20
 #define TETROMINO_HEIGHT	2
-#define TETROMINO_WIDTH		8
+#define TETROMINO_WIDTH		4
 #define TIME				1000
 
 // errors
@@ -29,7 +29,7 @@ enum rotation { ZERO, NINETY, ONE_EIGHTY, TWO_SEVENTTY };
 
 struct Tetromino
 {
-	char tetromino[TETROMINO_HEIGHT][TETROMINO_WIDTH];
+	bool tetromino[TETROMINO_HEIGHT][TETROMINO_WIDTH];
 
 	short int type;
 	struct cordinates dimensions;
@@ -284,14 +284,9 @@ inline static void SetGameScreen(void)
 
 inline static void SetTetrominoI(struct Tetromino* tetromino)
 {
-	for (int i = 0; i < 8; i = i + 2)
+	for (int i = 0; i < 4; i++)
 	{
-		tetromino->tetromino[0][i] = '[';
-	}
-
-	for (int i = 1; i < 8; i = i + 2)
-	{
-		tetromino->tetromino[0][i] = ']';
+		tetromino->tetromino[0][i] = true;
 	}
 
 	tetromino->type = I;
@@ -302,17 +297,11 @@ inline static void SetTetrominoI(struct Tetromino* tetromino)
 
 inline static void SetTetrominoT(struct Tetromino* tetromino)
 {
-	tetromino->tetromino[1][0] = '[';
-	tetromino->tetromino[1][1] = ']';
+	tetromino->tetromino[1][0] = true;
+	tetromino->tetromino[1][1] = true;
+	tetromino->tetromino[1][2] = true;
 
-	tetromino->tetromino[1][2] = '[';
-	tetromino->tetromino[1][3] = ']';
-
-	tetromino->tetromino[1][4] = '[';
-	tetromino->tetromino[1][5] = ']';
-
-	tetromino->tetromino[0][2] = '[';
-	tetromino->tetromino[0][3] = ']';
+	tetromino->tetromino[0][1] = true;
 
 	tetromino->type = T;
 	tetromino->dimensions.x = 3;
@@ -322,17 +311,11 @@ inline static void SetTetrominoT(struct Tetromino* tetromino)
 
 inline static void SetTetrominoL(struct Tetromino* tetromino)
 {
-	tetromino->tetromino[1][0] = '[';
-	tetromino->tetromino[1][1] = ']';
+	tetromino->tetromino[1][0] = true;
+	tetromino->tetromino[1][1] = true;
+	tetromino->tetromino[1][2] = true;
 
-	tetromino->tetromino[1][2] = '[';
-	tetromino->tetromino[1][3] = ']';
-
-	tetromino->tetromino[1][4] = '[';
-	tetromino->tetromino[1][5] = ']';
-
-	tetromino->tetromino[0][4] = '[';
-	tetromino->tetromino[0][5] = ']';
+	tetromino->tetromino[0][2] = true;
 
 	tetromino->type = L;
 	tetromino->dimensions.x = 3;
@@ -342,17 +325,11 @@ inline static void SetTetrominoL(struct Tetromino* tetromino)
 
 static void SetTetrominoJ(struct Tetromino* tetromino)
 {
-	tetromino->tetromino[1][0] = '[';
-	tetromino->tetromino[1][1] = ']';
+	tetromino->tetromino[1][0] = true;
+	tetromino->tetromino[1][1] = true;
+	tetromino->tetromino[1][2] = true;
 
-	tetromino->tetromino[1][2] = '[';
-	tetromino->tetromino[1][3] = ']';
-
-	tetromino->tetromino[1][4] = '[';
-	tetromino->tetromino[1][5] = ']';
-
-	tetromino->tetromino[0][0] = '[';
-	tetromino->tetromino[0][1] = ']';
+	tetromino->tetromino[0][0] = true;
 
 	tetromino->type = J;
 	tetromino->dimensions.x = 3;
@@ -362,17 +339,11 @@ static void SetTetrominoJ(struct Tetromino* tetromino)
 
 inline static void SetTetrominoS(struct Tetromino* tetromino)
 {
-	tetromino->tetromino[0][0] = '[';
-	tetromino->tetromino[0][1] = ']';
+	tetromino->tetromino[1][0] = true;
+	tetromino->tetromino[1][1] = true;
 
-	tetromino->tetromino[0][2] = '[';
-	tetromino->tetromino[0][3] = ']';
-
-	tetromino->tetromino[1][2] = '[';
-	tetromino->tetromino[1][3] = ']';
-
-	tetromino->tetromino[1][4] = '[';
-	tetromino->tetromino[1][5] = ']';
+	tetromino->tetromino[0][1] = true;
+	tetromino->tetromino[0][2] = true;
 
 	tetromino->type = Z;
 	tetromino->dimensions.x = 3;
@@ -382,17 +353,11 @@ inline static void SetTetrominoS(struct Tetromino* tetromino)
 
 inline static void SetTetrominoZ(struct Tetromino* tetromino)
 {
-	tetromino->tetromino[1][0] = '[';
-	tetromino->tetromino[1][1] = ']';
+	tetromino->tetromino[0][0] = true;
+	tetromino->tetromino[0][1] = true;
 
-	tetromino->tetromino[1][2] = '[';
-	tetromino->tetromino[1][3] = ']';
-
-	tetromino->tetromino[0][2] = '[';
-	tetromino->tetromino[0][3] = ']';
-
-	tetromino->tetromino[0][4] = '[';
-	tetromino->tetromino[0][5] = ']';
+	tetromino->tetromino[1][1] = true;
+	tetromino->tetromino[1][2] = true;
 
 	tetromino->type = S;
 	tetromino->dimensions.x = 3;
@@ -402,17 +367,11 @@ inline static void SetTetrominoZ(struct Tetromino* tetromino)
 
 inline static void SetTetrominoO(struct Tetromino* tetromino)
 {
-	tetromino->tetromino[0][0] = '[';
-	tetromino->tetromino[0][1] = ']';
+	tetromino->tetromino[0][0] = true;
+	tetromino->tetromino[0][1] = true;
 
-	tetromino->tetromino[0][2] = '[';
-	tetromino->tetromino[0][3] = ']';
-
-	tetromino->tetromino[1][0] = '[';
-	tetromino->tetromino[1][1] = ']';
-
-	tetromino->tetromino[1][2] = '[';
-	tetromino->tetromino[1][3] = ']';
+	tetromino->tetromino[1][0] = true;
+	tetromino->tetromino[1][1] = true;
 
 	tetromino->type = O;
 	tetromino->dimensions.x = 2;
@@ -426,7 +385,7 @@ inline static void SetTetrominoNull(struct Tetromino* tetromino)
 	{
 		for (int j = 0; j < TETROMINO_WIDTH; j++)
 		{
-			tetromino->tetromino[i][j] = ' ';
+			tetromino->tetromino[i][j] = false;
 		}
 	}
 
