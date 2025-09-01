@@ -41,6 +41,7 @@ struct Tetromino
 static void GetAnyInput							(void);
 static void PrintTetromino						(struct Tetromino*);
 static void EraseTetromino						(struct Tetromino*);
+static bool CheckTetromino						(struct Tetromino*);
 inline static void Game							(void);
 inline static void SetGameScreen				(void);
 inline static void SetEmptyScreen				(void);
@@ -425,13 +426,12 @@ inline static void Game(void)
 	current.index.x = 8;
 	current.index.y = 0;
 
-	while (true)
+	while (CheckTetromino(&current))
 	{
 		PrintTetromino(&current);
 		WaitForInput();
 		EraseTetromino(&current);
 		++current.index.y;
-		PrintTetromino(&current);
 	}
 
 	GetAnyInput();
@@ -509,6 +509,64 @@ static void EraseTetromino(struct Tetromino* tetromino)
 	}
 }
 
+static bool CheckTetromino(struct Tetromino* tetromino)
+{
+
+	TCHAR character;
+	DWORD count = 0;
+
+	for (int i = 0; i < tetromino->dimensions.y; i++)
+	{
+		for (int j = 0; j < tetromino->dimensions.y; j++)
+		{
+			switch(tetromino->angle)
+			{
+			case ZERO:
+				ReadConsoleOutputCharacter(
+					GetStdHandle(STD_OUTPUT_HANDLE),
+					&character,
+					1,
+					(COORD) { padding.x + 2 + tetromino->index.x + (j * 2) - 1, padding.y + tetromino->index.y + i - 1},
+					&count);
+				break;
+
+			case NINETY:
+				ReadConsoleOutputCharacter(
+					GetStdHandle(STD_OUTPUT_HANDLE),
+					&character,
+					1,
+					(COORD) { padding.x + 2 + tetromino->index.x + (i * 2) - 1, padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j - 1},
+					&count);
+				break;
+
+			case ONE_EIGHTY:
+				ReadConsoleOutputCharacter(
+					GetStdHandle(STD_OUTPUT_HANDLE),
+					&character,
+					1,
+					(COORD) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.x - (j + 1)) * 2) - 1, padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) - 1},
+					&count);
+				break;
+
+			case TWO_SEVENTTY:
+				ReadConsoleOutputCharacter(
+					GetStdHandle(STD_OUTPUT_HANDLE),
+					&character,
+					1,
+					(COORD) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.y - (i + 1)) * 2) - 1, padding.y + tetromino->index.y + j - 1},
+					&count);
+				break;
+			}
+
+			if (character != 32)
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
 
 // I am guilty of using chatgbt here
 // I am really sorry. I tried to look for solution
