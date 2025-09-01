@@ -417,7 +417,7 @@ inline static void Game(void)
 	next.index.x = (GAME_WIDTH + 3) + (13 - next.dimensions.x);
 	PrintTetromino(&next);
 
-	SetTetromino[RandomIndex()](&current);
+	SetTetromino[/*RandomIndex()*/ 0](&current);
 	current.index.x = 8;
 	current.index.y = 0;
 
@@ -584,41 +584,118 @@ inline static void WaitForInput(void)
 				// Up key is pressed
 				// flips backward
 
+				EraseTetromino(&current);
+				previous = current;
+
+				if (current.angle == ZERO)
+				{
+					current.angle = TWO_SEVENTTY;
+				}
+				else
+				{
+					--current.angle;
+				}
+				
+				switch (current.angle)
+				{
+				case NINETY: case TWO_SEVENTTY:
+					current.index.x += current.dimensions.x / 2;
+					current.index.y -= current.dimensions.x / 2;
+
+					break;
+
+				case ZERO: case ONE_EIGHTY:
+					current.index.x -= current.dimensions.x / 2;
+					current.index.y += current.dimensions.x / 2;
+
+					break;
+				}
+
+				if (!CheckTetromino(&current))
+				{
+					current = previous;
+				}
+
+
+				PrintTetromino(&current);
+
 				break;
+
 			case 80:
 				// Down key is pressed
 				// soft drop
+
 				return;
+
 			case 77:
 				// Right key is pressed
+
 				previous = current;
 				EraseTetromino(&current);
 				current.index.x += 2;
-				if (! CheckTetromino(&current))
+				if (!CheckTetromino(&current))
 				{
 					current = previous;
 				}
 				PrintTetromino(&current);
 
 				break;
+
 			case 75:
 				// Left key is pressed
+
 				previous = current;
 				EraseTetromino(&current);
 				current.index.x -= 2;
-				if (! CheckTetromino(&current))
+				if (!CheckTetromino(&current))
 				{
 					current = previous;
 				}
 				PrintTetromino(&current);
 
 				break;
+
 			case ' ':
 				// Space is pressed
 				break;
+
 			case 'z':
 				// 'z' is pressed
 				// flips forward
+
+				EraseTetromino(&current);
+				previous = current;
+
+				if (current.angle == TWO_SEVENTTY)
+				{
+					current.angle = ZERO;
+				}
+				else
+				{
+					++current.angle;
+				}
+				
+				switch (current.angle)
+				{
+				case NINETY: case TWO_SEVENTTY:
+					current.index.x += current.dimensions.x / 2;
+					current.index.y -= current.dimensions.x / 2;
+					
+					break;
+					
+				case ZERO: case ONE_EIGHTY:
+					current.index.x -= current.dimensions.x / 2;
+					current.index.y += current.dimensions.x / 2;
+
+					break;
+				}
+
+				if (!CheckTetromino(&current))
+				{
+					current = previous;
+				}
+
+				PrintTetromino(&current);
 
 				break;
 			}
