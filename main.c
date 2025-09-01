@@ -511,20 +511,19 @@ static void EraseTetromino(struct Tetromino* tetromino)
 
 static bool CheckTetromino(struct Tetromino* tetromino)
 {
-
-	TCHAR character;
+	TCHAR c;
 	DWORD count = 0;
 
 	for (int i = 0; i < tetromino->dimensions.y; i++)
 	{
-		for (int j = 0; j < tetromino->dimensions.y; j++)
+		for (int j = 0; j < tetromino->dimensions.x; j++)
 		{
 			switch(tetromino->angle)
 			{
 			case ZERO:
 				ReadConsoleOutputCharacter(
 					GetStdHandle(STD_OUTPUT_HANDLE),
-					&character,
+					&c,
 					1,
 					(COORD) { padding.x + 2 + tetromino->index.x + (j * 2) - 1, padding.y + tetromino->index.y + i - 1},
 					&count);
@@ -533,7 +532,7 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 			case NINETY:
 				ReadConsoleOutputCharacter(
 					GetStdHandle(STD_OUTPUT_HANDLE),
-					&character,
+					&c,
 					1,
 					(COORD) { padding.x + 2 + tetromino->index.x + (i * 2) - 1, padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j - 1},
 					&count);
@@ -542,7 +541,7 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 			case ONE_EIGHTY:
 				ReadConsoleOutputCharacter(
 					GetStdHandle(STD_OUTPUT_HANDLE),
-					&character,
+					&c,
 					1,
 					(COORD) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.x - (j + 1)) * 2) - 1, padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) - 1},
 					&count);
@@ -551,14 +550,14 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 			case TWO_SEVENTTY:
 				ReadConsoleOutputCharacter(
 					GetStdHandle(STD_OUTPUT_HANDLE),
-					&character,
+					&c,
 					1,
 					(COORD) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.y - (i + 1)) * 2) - 1, padding.y + tetromino->index.y + j - 1},
 					&count);
 				break;
 			}
 
-			if (character != 32)
+			if (tetromino->tetromino[i][j] && c != 32)
 			{
 				return false;
 			}
@@ -575,6 +574,7 @@ inline static void WaitForInput(void)
 {
 	time_t now = time(NULL);
 	char c;
+	struct Tetromino previous;
 
 	while ((time(NULL) - now) < 2)
 	{
@@ -596,15 +596,25 @@ inline static void WaitForInput(void)
 				return;
 			case 77:
 				// Right key is pressed
+				previous = current;
 				EraseTetromino(&current);
 				current.index.x += 2;
+				if (! CheckTetromino(&current))
+				{
+					current = previous;
+				}
 				PrintTetromino(&current);
 
 				break;
 			case 75:
 				// Left key is pressed
+				previous = current;
 				EraseTetromino(&current);
 				current.index.x -= 2;
+				if (! CheckTetromino(&current))
+				{
+					current = previous;
+				}
 				PrintTetromino(&current);
 
 				break;
