@@ -10,12 +10,7 @@
 #define	GAME_WIDTH			20
 #define TETROMINO_HEIGHT	2
 #define TETROMINO_WIDTH		4
-#define TIME				1000
-
-// errors
-#define LARGE_STRING_ERR	1
-#define THRD_CREATION_ERR	2
-#define MEM_ALLOC_ERR		3
+#define TIME				2
 
 struct cordinates
 {
@@ -576,7 +571,7 @@ inline static void WaitForInput(void)
 	char c;
 	struct Tetromino previous;
 
-	while ((time(NULL) - now) < 2)
+	while ((time(NULL) - now) < TIME)
 	{
 		// checkes the input buffer
 		if (_kbhit())
