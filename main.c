@@ -425,168 +425,87 @@ inline static void Game(void)
 	current.index.x = 8;
 	current.index.y = 0;
 
-	PrintTetromino(&current);
-	GetAnyInput();
-	EraseTetromino(&current);
+	while (true)
+	{
+		PrintTetromino(&current);
+		WaitForInput();
+		EraseTetromino(&current);
+		++current.index.y;
+		PrintTetromino(&current);
+	}
 
 	GetAnyInput();
 }
 
 static void PrintTetromino(struct Tetromino* tetromino)
 {
-	switch (tetromino->angle)
+	for (int i = 0; i < tetromino->dimensions.y; i++)
 	{
-	case ZERO:
-		for (int i = 0; i < tetromino->dimensions.y; i++)
+		for (int j = 0; j < tetromino->dimensions.x; j++)
 		{
-			for (int j = 0; j < tetromino->dimensions.x; j++)
+			switch (tetromino->angle)
 			{
+			case ZERO:
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (j * 2), padding.y + tetromino->index.y + i });
-				if (tetromino->tetromino[i][j])
-				{
-					printf("[]");
-					continue;
-				}
-				
-				printf("\x1b[2C");
-			}
-		}
+				break;
 
-		break;
-
-	case NINETY:
-		for (int i = 0; i < tetromino->dimensions.y; i++)
-		{
-			for (int j = 0; j < tetromino->dimensions.x; j++)
-			{
+			case NINETY:
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (i * 2), padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j });
-				if (tetromino->tetromino[i][j])
-				{
-					printf("[]");
-					continue;
-				}
+				break;
 
-				printf("\x1b[2C");
-			}
-		}
-
-		break;
-
-	case ONE_EIGHTY:
-		for (int i = 0; i < tetromino->dimensions.y; i++)
-		{
-			for (int j = 0; j < tetromino->dimensions.x; j++)
-			{
+			case ONE_EIGHTY:
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.x - (j + 1)) * 2), padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) });
-				if (tetromino->tetromino[i][j])
-				{
-					printf("[]");
-					continue;
-				}
+				break;
 
-				printf("\x1b[2C");
-			}
-		}
-
-		break;
-
-	case TWO_SEVENTTY:
-		for (int i = 0; i < tetromino->dimensions.y; i++)
-		{
-			for (int j = 0; j < tetromino->dimensions.x; j++)
-			{
+			case TWO_SEVENTTY:
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.y - (i + 1)) * 2), padding.y + tetromino->index.y + j });
-				if (tetromino->tetromino[i][j])
-				{
-					printf("[]");
-					continue;
-				}
-
-				printf("\x1b[2C");
+				break;
 			}
+
+			if (tetromino->tetromino[i][j])
+			{
+				printf("[]");
+				continue;
+			}
+			
+			printf("\x1b[2C");
 		}
-
-		break;
-
 	}
 }
 
 static void EraseTetromino(struct Tetromino* tetromino)
 {
-	switch (tetromino->angle)
+	for (int i = 0; i < tetromino->dimensions.y; i++)
 	{
-	case ZERO:
-		for (int i = 0; i < tetromino->dimensions.y; i++)
+		for (int j = 0; j < tetromino->dimensions.x; j++)
 		{
-			for (int j = 0; j < tetromino->dimensions.x; j++)
+			switch (tetromino->angle)
 			{
+			case ZERO:
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (j * 2), padding.y + tetromino->index.y + i });
-				if (tetromino->tetromino[i][j])
-				{
-					printf("  ");
-					continue;
-				}
+				break;
 
-				printf("\x1b[2C");
-			}
-		}
-
-		break;
-
-	case NINETY:
-		for (int i = 0; i < tetromino->dimensions.y; i++)
-		{
-			for (int j = 0; j < tetromino->dimensions.x; j++)
-			{
+			case NINETY:
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (i * 2), padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j });
-				if (tetromino->tetromino[i][j])
-				{
-					printf("  ");
-					continue;
-				}
+				break;
 
-				printf("\x1b[2C");
-			}
-		}
-
-		break;
-
-	case ONE_EIGHTY:
-		for (int i = 0; i < tetromino->dimensions.y; i++)
-		{
-			for (int j = 0; j < tetromino->dimensions.x; j++)
-			{
+			case ONE_EIGHTY:
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.x - (j + 1)) * 2), padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) });
-				if (tetromino->tetromino[i][j])
-				{
-					printf("  ");
-					continue;
-				}
+				break;
 
-				printf("\x1b[2C");
-			}
-		}
-
-		break;
-
-	case TWO_SEVENTTY:
-		for (int i = 0; i < tetromino->dimensions.y; i++)
-		{
-			for (int j = 0; j < tetromino->dimensions.x; j++)
-			{
+			case TWO_SEVENTTY:
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.y - (i + 1)) * 2), padding.y + tetromino->index.y + j });
-				if (tetromino->tetromino[i][j])
-				{
-					printf("  ");
-					continue;
-				}
-
-				printf("\x1b[2C");
+				break;
 			}
+
+			if (tetromino->tetromino[i][j])
+			{
+				printf("  ");
+				continue;
+			}
+
+			printf("\x1b[2C");
 		}
-
-		break;
-
 	}
 }
 
@@ -619,10 +538,16 @@ inline static void WaitForInput(void)
 				return;
 			case 77:
 				// Right key is pressed
+				EraseTetromino(&current);
+				current.index.x += 2;
+				PrintTetromino(&current);
 
 				break;
 			case 75:
 				// Left key is pressed
+				EraseTetromino(&current);
+				current.index.x -= 2;
+				PrintTetromino(&current);
 
 				break;
 			case ' ':
