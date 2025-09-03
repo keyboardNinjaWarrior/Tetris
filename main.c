@@ -1,4 +1,4 @@
-#include <time.h>
+﻿#include <time.h>
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
@@ -11,6 +11,24 @@
 #define TETROMINO_HEIGHT	2
 #define TETROMINO_WIDTH		4
 #define TIME				2
+
+// escape sequences
+#define ESC					"\x1b"
+#define CUF(x)				"[" #x "C"
+#define	ASCII				"(B"
+#define DRAW				"(0"
+#define BUFFER				"[?1049h"
+#define MAIN				"[?1049l"
+#define CUR_SHOW			"[?25l"
+
+#define	BOXA				"\x77"					// ┬
+#define BOXB				"\x61"			// ▒
+#define BOXC				"\x75"					// ┤
+#define BOXD				"\x71"			// ─
+#define BOXE				"\x6c"					// ┌
+#define BOXF				"\x74"			// ├
+#define BOXG				"\x6b"					// ┐
+#define BOXH				"\x78"			// │
 
 struct cordinates
 {
@@ -99,14 +117,14 @@ inline static void SetWindowsTitle(char* title)
 inline static void SetNewScreenBuffer(void)
 {
 
-	printf("\x1b[?1049h");						  // new screen buffer
-	printf("\x1b[0;0f");						  // moves the curser to (0,0)
+	printf(ESC BUFFER);						  // new screen buffer
+	printf(ESC "[0;0f");					  // moves the curser to (0,0)
 }
 
 inline static void ExitTetris(void)
 {
-	printf("\x1b[?1049l");						  // restores to the main buffer
-	printf("\x1b[?25l");						  // show cursor
+	printf(ESC MAIN);						  // restores to the main buffer
+	printf(ESC CUR_SHOW);						  // show cursor
 }
 
 inline static void GetConsoleDimensions(void)
@@ -135,33 +153,33 @@ inline static void Goto(cordinates position)
 
 inline static void SetInitialScreen(void)
 {
-	printf("\x1b[?25l");						  // hide cursor
-	printf("\x1b(0");							  // entering into drawing mode
+	printf(ESC CUR_SHOW);						  // hide cursor
+	printf(ESC DRAW);							  // entering into drawing mode
 
 	// printing the above border
-	WriteOnScreen("\x6c", (cordinates) { -1, -1 });
+	WriteOnScreen(BOXE, (cordinates) { -1, -1 });
 	for (int i = 0; i < SCREEN_WIDTH; i++)
 	{
-		printf("\x71");
+		printf(BOXD);
 	}
-	printf("\x6b");
+	printf(BOXF);
 
 	//prints middle part
 	for (int i = 0; i < SCREEN_HEIGHT; i++)
 	{
-		WriteOnScreen("\x78", (cordinates) { -1, i });
-		WriteOnScreen("\x78", (cordinates) { SCREEN_WIDTH, i });
+		WriteOnScreen(BOXH, (cordinates) { -1, i });
+		WriteOnScreen(BOXH, (cordinates) { SCREEN_WIDTH, i });
 	}
 
 	//prints the lower part of the box
 	WriteOnScreen("\x6d", (cordinates) { -1, SCREEN_HEIGHT });
 	for (int i = 0; i < SCREEN_WIDTH; i++)
 	{
-		printf("\x71");
+		printf(BOXD);
 	}
 	printf("\x6a");
 
-	printf("\x1b(B");							  // return to ascii mode
+	printf(ESC ASCII);							  // return to ascii mode
 }
 
 // makes the screen buffer empty
@@ -214,11 +232,11 @@ inline static void SetGameScreen(void)
 	}
 
 	// border that divides game and scoreboard
-	printf("\x1b(0");							  // drawing mode
-	WriteOnScreen("\x77", (cordinates) { GAME_WIDTH + 4, -1 });
+	printf(ESC DRAW);							  // drawing mode
+	WriteOnScreen(BOXA, (cordinates) { GAME_WIDTH + 4, -1 });
 	for (int i = 0; i < SCREEN_HEIGHT; i++)
 	{
-		WriteOnScreen("\x78", (cordinates) { GAME_WIDTH + 4, i });
+		WriteOnScreen(BOXH, (cordinates) { GAME_WIDTH + 4, i });
 	}
 	WriteOnScreen("\x76", (cordinates) { GAME_WIDTH + 4, SCREEN_HEIGHT });
 
@@ -231,49 +249,49 @@ inline static void SetGameScreen(void)
 	Goto((cordinates) { padding.x + width - 1, padding.y });
 	for (int i = 0; i < width; i++)
 	{
-		printf("\x61");
+		printf(BOXB);
 	}
 	Goto((cordinates) { padding.x + width - 1, padding.y + 2 });
 	for (int i = 0; i < width; i++)
 	{
-		printf("\x61");
+		printf(BOXB);
 	}
 	Goto((cordinates) { padding.x + width - 1, padding.y + 4 });
 	for (int i = 0; i < width; i++)
 	{
-		printf("\x61");
+		printf(BOXB);
 	}
-	WriteOnScreen("\x74", (cordinates) { width - 2, 5 });
+	WriteOnScreen(BOXF, (cordinates) { width - 2, 5 });
 	for (int i = 0; i < width; i++)
 	{
-		printf("\x71");
+		printf(BOXD);
 	}
-	WriteOnScreen("\x75", (cordinates) { SCREEN_WIDTH, 5 });
+	WriteOnScreen(BOXC, (cordinates) { SCREEN_WIDTH, 5 });
 
 	// the upcoming tetromino section
-	WriteOnScreen("\x74", (cordinates) { width - 2, SCREEN_HEIGHT - 7});
+	WriteOnScreen(BOXF, (cordinates) { width - 2, SCREEN_HEIGHT - 7});
 	for (int i = 0; i < width; i++)
 	{
-		printf("\x71");
+		printf(BOXD);
 	}
-	WriteOnScreen("\x75", (cordinates) { SCREEN_WIDTH, SCREEN_HEIGHT - 7});
+	WriteOnScreen(BOXC, (cordinates) { SCREEN_WIDTH, SCREEN_HEIGHT - 7});
 	Goto((cordinates) { padding.x + width - 1, padding.y + SCREEN_HEIGHT - 6 });
 
 	for (int i = 0; i < width; i++)
 	{
-		printf("\x61");
+		printf(BOXB);
 	}
 	Goto((cordinates) { padding.x + width - 1, padding.y + SCREEN_HEIGHT - 4 });
 	for (int i = 0; i < width; i++)
 	{
-		printf("\x61");
+		printf(BOXB);
 	}
 	Goto((cordinates) { padding.x + width - 1, padding.y + SCREEN_HEIGHT - 1 });
 	for (int i = 0; i < width; i++)
 	{
-		printf("\x61");
+		printf(BOXB);
 	}
-	printf("\x1b(B");							  // end drawing mode
+	printf(ESC ASCII);							  // end drawing mode
 
 	WriteOnScreen("Score", (cordinates) { width + 9, 1 });
 	WriteOnScreen("Upcoming", (cordinates) { width + 8, SCREEN_HEIGHT - 5 });
@@ -417,7 +435,7 @@ inline static void Game(void)
 	next.index.x = (GAME_WIDTH + 3) + (13 - next.dimensions.x);
 	PrintTetromino(&next);
 
-	SetTetromino[/*RandomIndex()*/ 0](&current);
+	SetTetromino[/*RandomIndex()*/ 3](&current);
 	current.index.x = 8;
 	current.index.y = 0;
 
@@ -463,7 +481,7 @@ static void PrintTetromino(struct Tetromino* tetromino)
 				continue;
 			}
 			
-			printf("\x1b[2C");
+			printf(ESC CUF(2));
 		}
 	}
 }
@@ -499,7 +517,7 @@ static void EraseTetromino(struct Tetromino* tetromino)
 				continue;
 			}
 
-			printf("\x1b[2C");
+			printf(ESC CUF(2));
 		}
 	}
 }
@@ -596,21 +614,6 @@ inline static void WaitForInput(void)
 					--current.angle;
 				}
 				
-				switch (current.angle)
-				{
-				case NINETY: case TWO_SEVENTTY:
-					current.index.x += current.dimensions.x / 2;
-					current.index.y -= current.dimensions.x / 2;
-
-					break;
-
-				case ZERO: case ONE_EIGHTY:
-					current.index.x -= current.dimensions.x / 2;
-					current.index.y += current.dimensions.x / 2;
-
-					break;
-				}
-
 				if (!CheckTetromino(&current))
 				{
 					current = previous;
@@ -675,21 +678,6 @@ inline static void WaitForInput(void)
 					++current.angle;
 				}
 				
-				switch (current.angle)
-				{
-				case NINETY: case TWO_SEVENTTY:
-					current.index.x += current.dimensions.x / 2;
-					current.index.y -= current.dimensions.x / 2;
-					
-					break;
-					
-				case ZERO: case ONE_EIGHTY:
-					current.index.x -= current.dimensions.x / 2;
-					current.index.y += current.dimensions.x / 2;
-
-					break;
-				}
-
 				if (!CheckTetromino(&current))
 				{
 					current = previous;
