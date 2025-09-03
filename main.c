@@ -21,14 +21,16 @@
 #define MAIN				"[?1049l"
 #define CUR_SHOW			"[?25l"
 
-#define	BOXA				"\x77"					// ┬
-#define BOXB				"\x61"			// ▒
-#define BOXC				"\x75"					// ┤
-#define BOXD				"\x71"			// ─
-#define BOXE				"\x6c"					// ┌
-#define BOXF				"\x74"			// ├
-#define BOXG				"\x6b"					// ┐
-#define BOXH				"\x78"			// │
+#define	UPPER_SEPERATION	"\x77"					// ┬
+#define BLOCK				"\x61"			// ▒
+#define LEFT_SEPERATION		"\x75"					// ┤
+#define DASH				"\x71"			// ─
+#define UPPER_LEFT_CORNER	"\x6c"					// ┌
+#define RIGHT_SEPERATION	"\x74"			// ├
+#define UPPER_RIGHT_CORNER	"\x6b"					// ┐
+#define PIPE				"\x78"			// │
+#define BOTTOM_RIGHT_CORNER	"\x6a"					// └
+#define BOTTOM_LEFT_CORNER	"\x6d"			// ┘
 
 struct cordinates
 {
@@ -48,7 +50,10 @@ struct Tetromino
 	struct cordinates dimensions;
 	struct cordinates index;
 	enum rotation angle;
-} current, next;
+
+	struct cordinates rotation_offset[4];
+
+} current, next, previous;
 
 // functions
 static void GetAnyInput							(void);
@@ -58,6 +63,8 @@ static bool CheckTetromino						(struct Tetromino*);
 inline static void Game							(void);
 inline static void SetGameScreen				(void);
 inline static void SetEmptyScreen				(void);
+inline static void ClockwiseRotate				(void);
+inline static void RotateTetromino				(void);
 inline static void SetInitialScreen				(void);
 inline static void SetNewScreenBuffer			(void);
 inline static void GetConsoleDimensions			(void);
@@ -109,7 +116,7 @@ void GetAnyInput(void)
 	char c = _getch();
 }
 
-inline static void SetWindowsTitle(char* title)
+inline static void SetWindowsTitle(char* title) 
 {
 	printf("\x1B]0;%s\x1B\x5c", title);
 }
@@ -123,7 +130,7 @@ inline static void SetNewScreenBuffer(void)
 
 inline static void ExitTetris(void)
 {
-	printf(ESC MAIN);						  // restores to the main buffer
+	printf(ESC MAIN);							  // restores to the main buffer
 	printf(ESC CUR_SHOW);						  // show cursor
 }
 
@@ -148,7 +155,7 @@ inline static void GetConsoleDimensions(void)
 
 inline static void Goto(cordinates position)
 {
-	printf("\x1b[%d;%dH", position.y, position.x);
+	printf(ESC "[%d;%dH", position.y, position.x);
 }
 
 inline static void SetInitialScreen(void)
@@ -157,27 +164,27 @@ inline static void SetInitialScreen(void)
 	printf(ESC DRAW);							  // entering into drawing mode
 
 	// printing the above border
-	WriteOnScreen(BOXE, (cordinates) { -1, -1 });
+	WriteOnScreen(UPPER_LEFT_CORNER, (cordinates) { -1, -1 });
 	for (int i = 0; i < SCREEN_WIDTH; i++)
 	{
-		printf(BOXD);
+		printf(DASH);
 	}
-	printf(BOXF);
+	printf(UPPER_RIGHT_CORNER);
 
 	//prints middle part
 	for (int i = 0; i < SCREEN_HEIGHT; i++)
 	{
-		WriteOnScreen(BOXH, (cordinates) { -1, i });
-		WriteOnScreen(BOXH, (cordinates) { SCREEN_WIDTH, i });
+		WriteOnScreen(PIPE, (cordinates) { -1, i });
+		WriteOnScreen(PIPE, (cordinates) { SCREEN_WIDTH, i });
 	}
 
 	//prints the lower part of the box
-	WriteOnScreen("\x6d", (cordinates) { -1, SCREEN_HEIGHT });
+	WriteOnScreen(BOTTOM_LEFT_CORNER, (cordinates) { -1, SCREEN_HEIGHT });
 	for (int i = 0; i < SCREEN_WIDTH; i++)
 	{
-		printf(BOXD);
+		printf(DASH);
 	}
-	printf("\x6a");
+	printf(BOTTOM_RIGHT_CORNER);
 
 	printf(ESC ASCII);							  // return to ascii mode
 }
@@ -233,10 +240,10 @@ inline static void SetGameScreen(void)
 
 	// border that divides game and scoreboard
 	printf(ESC DRAW);							  // drawing mode
-	WriteOnScreen(BOXA, (cordinates) { GAME_WIDTH + 4, -1 });
+	WriteOnScreen(UPPER_SEPERATION, (cordinates) { GAME_WIDTH + 4, -1 });
 	for (int i = 0; i < SCREEN_HEIGHT; i++)
 	{
-		WriteOnScreen(BOXH, (cordinates) { GAME_WIDTH + 4, i });
+		WriteOnScreen(PIPE, (cordinates) { GAME_WIDTH + 4, i });
 	}
 	WriteOnScreen("\x76", (cordinates) { GAME_WIDTH + 4, SCREEN_HEIGHT });
 
@@ -249,47 +256,47 @@ inline static void SetGameScreen(void)
 	Goto((cordinates) { padding.x + width - 1, padding.y });
 	for (int i = 0; i < width; i++)
 	{
-		printf(BOXB);
+		printf(BLOCK);
 	}
 	Goto((cordinates) { padding.x + width - 1, padding.y + 2 });
 	for (int i = 0; i < width; i++)
 	{
-		printf(BOXB);
+		printf(BLOCK);
 	}
 	Goto((cordinates) { padding.x + width - 1, padding.y + 4 });
 	for (int i = 0; i < width; i++)
 	{
-		printf(BOXB);
+		printf(BLOCK);
 	}
-	WriteOnScreen(BOXF, (cordinates) { width - 2, 5 });
+	WriteOnScreen(RIGHT_SEPERATION, (cordinates) { width - 2, 5 });
 	for (int i = 0; i < width; i++)
 	{
-		printf(BOXD);
+		printf(DASH);
 	}
-	WriteOnScreen(BOXC, (cordinates) { SCREEN_WIDTH, 5 });
+	WriteOnScreen(LEFT_SEPERATION, (cordinates) { SCREEN_WIDTH, 5 });
 
 	// the upcoming tetromino section
-	WriteOnScreen(BOXF, (cordinates) { width - 2, SCREEN_HEIGHT - 7});
+	WriteOnScreen(RIGHT_SEPERATION, (cordinates) { width - 2, SCREEN_HEIGHT - 7});
 	for (int i = 0; i < width; i++)
 	{
-		printf(BOXD);
+		printf(DASH);
 	}
-	WriteOnScreen(BOXC, (cordinates) { SCREEN_WIDTH, SCREEN_HEIGHT - 7});
+	WriteOnScreen(LEFT_SEPERATION, (cordinates) { SCREEN_WIDTH, SCREEN_HEIGHT - 7});
 	Goto((cordinates) { padding.x + width - 1, padding.y + SCREEN_HEIGHT - 6 });
 
 	for (int i = 0; i < width; i++)
 	{
-		printf(BOXB);
+		printf(BLOCK);
 	}
 	Goto((cordinates) { padding.x + width - 1, padding.y + SCREEN_HEIGHT - 4 });
 	for (int i = 0; i < width; i++)
 	{
-		printf(BOXB);
+		printf(BLOCK);
 	}
 	Goto((cordinates) { padding.x + width - 1, padding.y + SCREEN_HEIGHT - 1 });
 	for (int i = 0; i < width; i++)
 	{
-		printf(BOXB);
+		printf(BLOCK);
 	}
 	printf(ESC ASCII);							  // end drawing mode
 
@@ -308,6 +315,18 @@ inline static void SetTetrominoI(struct Tetromino* tetromino)
 	tetromino->dimensions.x = 4;
 	tetromino->dimensions.y = 1;
 	tetromino->angle = ZERO;
+	
+	tetromino->rotation_offset[ZERO].x = 0;
+	tetromino->rotation_offset[ZERO].y = 0;
+	
+	tetromino->rotation_offset[NINETY].x = 2;
+	tetromino->rotation_offset[NINETY].y = -2;
+	
+	tetromino->rotation_offset[ONE_EIGHTY].x = -2;
+	tetromino->rotation_offset[ONE_EIGHTY].y = 0;
+
+	tetromino->rotation_offset[TWO_SEVENTTY].x = 2;
+	tetromino->rotation_offset[TWO_SEVENTTY].y = -1;
 }
 
 inline static void SetTetrominoT(struct Tetromino* tetromino)
@@ -322,6 +341,18 @@ inline static void SetTetrominoT(struct Tetromino* tetromino)
 	tetromino->dimensions.x = 3;
 	tetromino->dimensions.y = 2;
 	tetromino->angle = ZERO;
+
+	tetromino->rotation_offset[ZERO].x = 0;
+	tetromino->rotation_offset[ZERO].y = 0;
+
+	tetromino->rotation_offset[NINETY].x = 0;
+	tetromino->rotation_offset[NINETY].y = 0;
+
+	tetromino->rotation_offset[ONE_EIGHTY].x = 0;
+	tetromino->rotation_offset[ONE_EIGHTY].y = 1;
+
+	tetromino->rotation_offset[TWO_SEVENTTY].x = 2;
+	tetromino->rotation_offset[TWO_SEVENTTY].y = 0;
 }
 
 inline static void SetTetrominoL(struct Tetromino* tetromino)
@@ -336,6 +367,18 @@ inline static void SetTetrominoL(struct Tetromino* tetromino)
 	tetromino->dimensions.x = 3;
 	tetromino->dimensions.y = 2;
 	tetromino->angle = ZERO;
+
+	tetromino->rotation_offset[ZERO].x = 0;
+	tetromino->rotation_offset[ZERO].y = 0;
+
+	tetromino->rotation_offset[NINETY].x = 0;
+	tetromino->rotation_offset[NINETY].y = 0;
+
+	tetromino->rotation_offset[ONE_EIGHTY].x = 0;
+	tetromino->rotation_offset[ONE_EIGHTY].y = 1;
+
+	tetromino->rotation_offset[TWO_SEVENTTY].x = 2;
+	tetromino->rotation_offset[TWO_SEVENTTY].y = 0;
 }
 
 static void SetTetrominoJ(struct Tetromino* tetromino)
@@ -350,6 +393,18 @@ static void SetTetrominoJ(struct Tetromino* tetromino)
 	tetromino->dimensions.x = 3;
 	tetromino->dimensions.y = 2;
 	tetromino->angle = ZERO;
+
+	tetromino->rotation_offset[ZERO].x = 0;
+	tetromino->rotation_offset[ZERO].y = 0;
+
+	tetromino->rotation_offset[NINETY].x = 0;
+	tetromino->rotation_offset[NINETY].y = 0;
+	
+	tetromino->rotation_offset[ONE_EIGHTY].x = 0;
+	tetromino->rotation_offset[ONE_EIGHTY].y = 1;
+
+	tetromino->rotation_offset[TWO_SEVENTTY].x = 2;
+	tetromino->rotation_offset[TWO_SEVENTTY].y = 0;
 }
 
 inline static void SetTetrominoS(struct Tetromino* tetromino)
@@ -364,6 +419,18 @@ inline static void SetTetrominoS(struct Tetromino* tetromino)
 	tetromino->dimensions.x = 3;
 	tetromino->dimensions.y = 2;
 	tetromino->angle = ZERO;
+
+	tetromino->rotation_offset[ZERO].x = 0;
+	tetromino->rotation_offset[ZERO].y = 0;
+
+	tetromino->rotation_offset[NINETY].x = 2;
+	tetromino->rotation_offset[NINETY].y = 0;
+
+	tetromino->rotation_offset[ONE_EIGHTY].x = 0;
+	tetromino->rotation_offset[ONE_EIGHTY].y = 1;
+
+	tetromino->rotation_offset[TWO_SEVENTTY].x = 0;
+	tetromino->rotation_offset[TWO_SEVENTTY].y = 0;
 }
 
 inline static void SetTetrominoZ(struct Tetromino* tetromino)
@@ -378,6 +445,18 @@ inline static void SetTetrominoZ(struct Tetromino* tetromino)
 	tetromino->dimensions.x = 3;
 	tetromino->dimensions.y = 2;
 	tetromino->angle = ZERO;
+
+	tetromino->rotation_offset[ZERO].x = 0;
+	tetromino->rotation_offset[ZERO].y = 0;
+
+	tetromino->rotation_offset[NINETY].x = 2;
+	tetromino->rotation_offset[NINETY].y = 0;
+
+	tetromino->rotation_offset[ONE_EIGHTY].x = 0;
+	tetromino->rotation_offset[ONE_EIGHTY].y = 1;
+
+	tetromino->rotation_offset[TWO_SEVENTTY].x = 0;
+	tetromino->rotation_offset[TWO_SEVENTTY].y = 0;
 }
 
 inline static void SetTetrominoO(struct Tetromino* tetromino)
@@ -392,6 +471,18 @@ inline static void SetTetrominoO(struct Tetromino* tetromino)
 	tetromino->dimensions.x = 2;
 	tetromino->dimensions.y = 2;
 	tetromino->angle = ZERO;
+
+	tetromino->rotation_offset[ZERO].x = 0;
+	tetromino->rotation_offset[ZERO].y = 0;
+
+	tetromino->rotation_offset[NINETY].x = 0;
+	tetromino->rotation_offset[NINETY].y = 0;
+
+	tetromino->rotation_offset[ONE_EIGHTY].x = 0;
+	tetromino->rotation_offset[ONE_EIGHTY].y = 0;
+
+	tetromino->rotation_offset[TWO_SEVENTTY].x = 0;
+	tetromino->rotation_offset[TWO_SEVENTTY].y = 0;
 }
 
 inline static void SetTetrominoNull(struct Tetromino* tetromino)
@@ -435,16 +526,16 @@ inline static void Game(void)
 	next.index.x = (GAME_WIDTH + 3) + (13 - next.dimensions.x);
 	PrintTetromino(&next);
 
-	SetTetromino[/*RandomIndex()*/ 3](&current);
+	SetTetromino[/*RandomIndex()*/ 6](&current);
 	current.index.x = 8;
-	current.index.y = 0;
+	current.index.y = 5;
 
 	while (CheckTetromino(&current))
 	{
 		PrintTetromino(&current);
 		WaitForInput();
 		EraseTetromino(&current);
-		++current.index.y;
+		// ++current.index.y;
 	}
 
 	GetAnyInput();
@@ -587,7 +678,6 @@ inline static void WaitForInput(void)
 {
 	time_t now = time(NULL);
 	char c;
-	struct Tetromino previous;
 
 	while ((time(NULL) - now) < TIME)
 	{
@@ -614,12 +704,7 @@ inline static void WaitForInput(void)
 					--current.angle;
 				}
 				
-				if (!CheckTetromino(&current))
-				{
-					current = previous;
-				}
-
-
+				RotateTetromino();
 				PrintTetromino(&current);
 
 				break;
@@ -665,9 +750,8 @@ inline static void WaitForInput(void)
 			case 'z':
 				// 'z' is pressed
 				// flips forward
-
-				EraseTetromino(&current);
 				previous = current;
+				EraseTetromino(&current);
 
 				if (current.angle == TWO_SEVENTTY)
 				{
@@ -677,11 +761,11 @@ inline static void WaitForInput(void)
 				{
 					++current.angle;
 				}
-				
-				if (!CheckTetromino(&current))
-				{
-					current = previous;
-				}
+
+				ClockwiseRotate();
+				RotateTetromino();
+
+
 
 				PrintTetromino(&current);
 
@@ -689,4 +773,20 @@ inline static void WaitForInput(void)
 			}
 		}
 	}
+}
+
+inline static void RotateTetromino(void)
+{
+	current.index.x = current.index.x - current.rotation_offset[previous.angle].x + current.rotation_offset[current.angle].x;
+	current.index.y = current.index.y - current.rotation_offset[previous.angle].y + current.rotation_offset[current.angle].y;
+}
+
+inline static void ClockwiseRotate(void)
+{
+	RotateTetromino();
+}
+
+inline static void CounterClockwiseRotate(void)
+{
+	RotateTetromino();
 }
