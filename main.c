@@ -406,10 +406,10 @@ inline static void SetTetrominoI(struct Tetromino* tetromino)
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][1].y =  1;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][2].x = -6;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][2].y =  1;
-	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].x = -2;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].x =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].y =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].x = -6;
-	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].y = -3;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].y =  3;
 }
 
 inline static void SetTetrominoT(struct Tetromino* tetromino)
@@ -529,9 +529,9 @@ inline static void SetCommonRotationOffset(struct Tetromino* tetromino)
 	tetromino->clockwise_offset[ZERO][2].x =  0;
 	tetromino->clockwise_offset[ZERO][2].y = -1;
 	tetromino->clockwise_offset[ZERO][3].x =  2;
-	tetromino->clockwise_offset[ZERO][3].y =  1;
+	tetromino->clockwise_offset[ZERO][3].y =  2;
 	tetromino->clockwise_offset[ZERO][4].x =  0;
-	tetromino->clockwise_offset[ZERO][4].y =  1;
+	tetromino->clockwise_offset[ZERO][4].y =  2;
 
 	// from 0 to 90
 	tetromino->anticlockwise_offset[ZERO][0].x =  0;
@@ -541,9 +541,9 @@ inline static void SetCommonRotationOffset(struct Tetromino* tetromino)
 	tetromino->anticlockwise_offset[ZERO][2].x =  2;
 	tetromino->anticlockwise_offset[ZERO][2].y = -1;
 	tetromino->anticlockwise_offset[ZERO][3].x =  0;
-	tetromino->anticlockwise_offset[ZERO][3].y =  1;
+	tetromino->anticlockwise_offset[ZERO][3].y =  2;
 	tetromino->anticlockwise_offset[ZERO][4].x =  2;
-	tetromino->anticlockwise_offset[ZERO][4].y =  1;
+	tetromino->anticlockwise_offset[ZERO][4].y =  2;
 
 	// from 90 to 0
 	tetromino->clockwise_offset[NINETY][0].x =  0;
@@ -606,7 +606,7 @@ inline static void SetCommonRotationOffset(struct Tetromino* tetromino)
 	tetromino->clockwise_offset[TWO_SEVENTTY][4].y = -1;
 
 	// from 270 to 0
-	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].x = -1;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].x = -2;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].y =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][1].x =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][1].y =  0;
@@ -646,8 +646,8 @@ inline static void Game(void)
 	next.index.x = (GAME_WIDTH + 3) + (13 - next.dimensions.x);
 	PrintTetromino(&next);
 
-	SetTetromino[/*RandomIndex()*/ 6](&current);
-	current.index.x = 8;
+	SetTetromino[/*RandomIndex()*/ 2](&current);
+	current.index.x = 10;
 	current.index.y = 5;
 
 	while (CheckTetromino(&current))
@@ -655,7 +655,7 @@ inline static void Game(void)
 		PrintTetromino(&current);
 		WaitForInput();
 		EraseTetromino(&current);
-		// ++current.index.y;
+		++current.index.y;
 	}
 
 	GetAnyInput();
@@ -798,6 +798,7 @@ inline static void WaitForInput(void)
 {
 	time_t now = time(NULL);
 	char c;
+	previous = current;
 
 	while ((time(NULL) - now) < TIME)
 	{
@@ -812,21 +813,6 @@ inline static void WaitForInput(void)
 				// Up key is pressed
 				// flips backward
 
-				EraseTetromino(&current);
-				previous = current;
-
-				if (current.angle == ZERO)
-				{
-					current.angle = TWO_SEVENTTY;
-				}
-				else
-				{
-					--current.angle;
-				}
-				
-				RotateTetromino();
-				PrintTetromino(&current);
-
 				break;
 
 			case 80:
@@ -838,7 +824,6 @@ inline static void WaitForInput(void)
 			case 77:
 				// Right key is pressed
 
-				previous = current;
 				EraseTetromino(&current);
 				current.index.x += 2;
 				if (!CheckTetromino(&current))
@@ -852,7 +837,6 @@ inline static void WaitForInput(void)
 			case 75:
 				// Left key is pressed
 
-				previous = current;
 				EraseTetromino(&current);
 				current.index.x -= 2;
 				if (!CheckTetromino(&current))
@@ -870,19 +854,6 @@ inline static void WaitForInput(void)
 			case 'z':
 				// 'z' is pressed
 				// flips forward
-				previous = current;
-				EraseTetromino(&current);
-
-				if (current.angle == TWO_SEVENTTY)
-				{
-					current.angle = ZERO;
-				}
-				else
-				{
-					++current.angle;
-				}
-
-				PrintTetromino(&current);
 
 				break;
 			}
