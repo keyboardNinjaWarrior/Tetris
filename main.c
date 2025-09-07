@@ -76,6 +76,7 @@ inline static void SetTetrominoZ				(struct Tetromino*);
 inline static void SetTetrominoS				(struct Tetromino*);
 inline static void SetTetrominoO				(struct Tetromino*);
 inline static void SetTetrominoNull				(struct Tetromino*);
+inline static void RotateCounterclockwise		(void);
 inline static void SetCommonRotationOffset		(struct Tetromino*);
 inline static void Goto							(struct cordinates);
 inline static void WaitForInput					(void);
@@ -646,9 +647,9 @@ inline static void Game(void)
 	next.index.x = (GAME_WIDTH + 3) + (13 - next.dimensions.x);
 	PrintTetromino(&next);
 
-	SetTetromino[/*RandomIndex()*/ 2](&current);
-	current.index.x = 10;
-	current.index.y = 5;
+	SetTetromino[RandomIndex()](&current);
+	current.index.x = 8;
+	current.index.y = 0;
 
 	while (CheckTetromino(&current))
 	{
@@ -794,11 +795,13 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 // I am guilty of using chatgbt here
 // I am really sorry. I tried to look for solution
 // everywhere :(
+
+// using `previous = current` outside of the while 
+// loop causes a weird bug
 inline static void WaitForInput(void)
 {
 	time_t now = time(NULL);
 	char c;
-	previous = current;
 
 	while ((time(NULL) - now) < TIME)
 	{
@@ -807,7 +810,7 @@ inline static void WaitForInput(void)
 		{
 			c = _getch();
 
-			switch (c) 
+			switch (c)
 			{
 			case 72:
 				// Up key is pressed
@@ -824,6 +827,7 @@ inline static void WaitForInput(void)
 			case 77:
 				// Right key is pressed
 
+				previous = current;
 				EraseTetromino(&current);
 				current.index.x += 2;
 				if (!CheckTetromino(&current))
@@ -837,6 +841,7 @@ inline static void WaitForInput(void)
 			case 75:
 				// Left key is pressed
 
+				previous = current;
 				EraseTetromino(&current);
 				current.index.x -= 2;
 				if (!CheckTetromino(&current))
@@ -853,10 +858,43 @@ inline static void WaitForInput(void)
 
 			case 'z':
 				// 'z' is pressed
-				// flips forward
+				// flips forwardgi
+
+				RotateCounterclockwise();
 
 				break;
 			}
 		}
 	}
+}
+
+inline static void RotateCounterclockwise(void)
+{
+	previous = current;
+	EraseTetromino(&current);
+	if (current.angle == TWO_SEVENTTY)
+	{
+		current.angle = ZERO;
+	}
+	++current.angle;
+
+	for (int i = 0; i < 5; i++)
+	{
+		current.index.x += current.anticlockwise_offset[previous.angle][i].x;
+		current.index.y += current.anticlockwise_offset[previous.angle][i].y;
+
+		if (CheckTetromino(&current))
+		{
+			goto Print;
+		}
+
+		current.index.x -= current.anticlockwise_offset[previous.angle][i].x;
+		current.index.y -= current.anticlockwise_offset[previous.angle][i].y;
+
+	}
+
+	current = previous;
+
+Print:
+	PrintTetromino(&current);
 }
