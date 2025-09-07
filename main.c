@@ -61,11 +61,15 @@ static void PrintTetromino						(struct Tetromino*);
 static void EraseTetromino						(struct Tetromino*);
 static bool CheckTetromino						(struct Tetromino*);
 inline static void Game							(void);
+inline static void ExitTetris					(void);
+inline static void WaitForInput					(void);
 inline static void SetGameScreen				(void);
 inline static void SetEmptyScreen				(void);
+inline static void RotateClockwise				(void);
 inline static void SetInitialScreen				(void);
 inline static void SetNewScreenBuffer			(void);
 inline static void GetConsoleDimensions			(void);
+inline static void RotateCounterclockwise		(void);
 inline static void SetWindowsTitle				(char*);
 inline static void WriteOnScreen				(char[SCREEN_WIDTH], cordinates);
 inline static void SetTetrominoI				(struct Tetromino*);
@@ -76,11 +80,8 @@ inline static void SetTetrominoZ				(struct Tetromino*);
 inline static void SetTetrominoS				(struct Tetromino*);
 inline static void SetTetrominoO				(struct Tetromino*);
 inline static void SetTetrominoNull				(struct Tetromino*);
-inline static void RotateCounterclockwise		(void);
 inline static void SetCommonRotationOffset		(struct Tetromino*);
 inline static void Goto							(struct cordinates);
-inline static void WaitForInput					(void);
-inline static void ExitTetris					(void);
 inline static unsigned short int RandomIndex	(void);
 
 int main(void)
@@ -816,6 +817,8 @@ inline static void WaitForInput(void)
 				// Up key is pressed
 				// flips backward
 
+				RotateClockwise();
+
 				break;
 
 			case 80:
@@ -876,7 +879,10 @@ inline static void RotateCounterclockwise(void)
 	{
 		current.angle = ZERO;
 	}
-	++current.angle;
+	else
+	{
+		++current.angle;
+	}
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -890,6 +896,40 @@ inline static void RotateCounterclockwise(void)
 
 		current.index.x -= current.anticlockwise_offset[previous.angle][i].x;
 		current.index.y -= current.anticlockwise_offset[previous.angle][i].y;
+
+	}
+
+	current = previous;
+
+Print:
+	PrintTetromino(&current);
+}
+
+inline static void RotateClockwise(void)
+{
+	previous = current;
+	EraseTetromino(&current);
+	if (current.angle == ZERO)
+	{
+		current.angle = TWO_SEVENTTY;
+	}
+	else
+	{
+		--current.angle;
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		current.index.x += current.clockwise_offset[previous.angle][i].x;
+		current.index.y += current.clockwise_offset[previous.angle][i].y;
+
+		if (CheckTetromino(&current))
+		{
+			goto Print;
+		}
+
+		current.index.x -= current.clockwise_offset[previous.angle][i].x;
+		current.index.y -= current.clockwise_offset[previous.angle][i].y;
 
 	}
 
