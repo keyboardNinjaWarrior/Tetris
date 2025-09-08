@@ -676,7 +676,6 @@ inline static void Game(void)
 
 	while (CheckTetromino(&current))
 	{
-		// predictory tetromino
 		PredictTetromino();
 
 		SetColor(&current);
