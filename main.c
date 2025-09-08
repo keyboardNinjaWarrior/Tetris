@@ -85,6 +85,7 @@ inline static void SetEmptyScreen				(void);
 inline static void RotateClockwise				(void);
 inline static void PredictTetromino				(void);
 inline static void SetInitialScreen				(void);
+inline static void PrintNextTetromino			(void);
 inline static void SetNewScreenBuffer			(void);
 inline static void GetConsoleDimensions			(void);
 inline static void RotateCounterclockwise		(void);
@@ -337,99 +338,99 @@ inline static void SetTetrominoI(struct Tetromino* tetromino)
 	tetromino->angle = ZERO;
 
 	// from 0 to 270
-	tetromino->clockwise_offset[ZERO][0].x =  4;
+	tetromino->clockwise_offset[ZERO][0].x =  2;
 	tetromino->clockwise_offset[ZERO][0].y = -1;
 	tetromino->clockwise_offset[ZERO][1].x =  0;
 	tetromino->clockwise_offset[ZERO][1].y = -1;
-	tetromino->clockwise_offset[ZERO][2].x =  6;
+	tetromino->clockwise_offset[ZERO][2].x =  3;
 	tetromino->clockwise_offset[ZERO][2].y = -1;
 	tetromino->clockwise_offset[ZERO][3].x =  0;
 	tetromino->clockwise_offset[ZERO][3].y =  0;
-	tetromino->clockwise_offset[ZERO][4].x =  6;
+	tetromino->clockwise_offset[ZERO][4].x =  3;
 	tetromino->clockwise_offset[ZERO][4].y = -3;
 
 	// from 0 to 90
-	tetromino->anticlockwise_offset[ZERO][0].x =  2;
+	tetromino->anticlockwise_offset[ZERO][0].x =  1;
 	tetromino->anticlockwise_offset[ZERO][0].y = -1;
 	tetromino->anticlockwise_offset[ZERO][1].x =  0;
 	tetromino->anticlockwise_offset[ZERO][1].y = -1;
-	tetromino->anticlockwise_offset[ZERO][2].x =  6;
+	tetromino->anticlockwise_offset[ZERO][2].x =  3;
 	tetromino->anticlockwise_offset[ZERO][2].y = -1;
 	tetromino->anticlockwise_offset[ZERO][3].x =  0;
 	tetromino->anticlockwise_offset[ZERO][3].y = -3;
-	tetromino->anticlockwise_offset[ZERO][4].x =  6;
+	tetromino->anticlockwise_offset[ZERO][4].x =  3;
 	tetromino->anticlockwise_offset[ZERO][4].y =  0;
 
 	// from 90 to 0
-	tetromino->clockwise_offset[NINETY][0].x = -2;
+	tetromino->clockwise_offset[NINETY][0].x = -1;
 	tetromino->clockwise_offset[NINETY][0].y =  1;
 	tetromino->clockwise_offset[NINETY][1].x =  0;
 	tetromino->clockwise_offset[NINETY][1].y =  1;
-	tetromino->clockwise_offset[NINETY][2].x = -6;
+	tetromino->clockwise_offset[NINETY][2].x = -3;
 	tetromino->clockwise_offset[NINETY][2].y =  1;
 	tetromino->clockwise_offset[NINETY][3].x =  0;
 	tetromino->clockwise_offset[NINETY][3].y =  3;
-	tetromino->clockwise_offset[NINETY][4].x = -6;
+	tetromino->clockwise_offset[NINETY][4].x = -3;
 	tetromino->clockwise_offset[NINETY][4].y =  0;
 
 	// from 90 to 180
-	tetromino->anticlockwise_offset[NINETY][0].x = -2;
+	tetromino->anticlockwise_offset[NINETY][0].x = -1;
 	tetromino->anticlockwise_offset[NINETY][0].y =  2;
-	tetromino->anticlockwise_offset[NINETY][1].x = -6;
+	tetromino->anticlockwise_offset[NINETY][1].x = -3;
 	tetromino->anticlockwise_offset[NINETY][1].y =  2;
 	tetromino->anticlockwise_offset[NINETY][2].x =  0;
 	tetromino->anticlockwise_offset[NINETY][2].y =  2;
-	tetromino->anticlockwise_offset[NINETY][3].x = -6;
+	tetromino->anticlockwise_offset[NINETY][3].x = -3;
 	tetromino->anticlockwise_offset[NINETY][3].y =  3;
 	tetromino->anticlockwise_offset[NINETY][4].x =  0;
 	tetromino->anticlockwise_offset[NINETY][4].y =  0;
 
 	// from 180 to 90
-	tetromino->clockwise_offset[ONE_EIGHTY][0].x =  2;
+	tetromino->clockwise_offset[ONE_EIGHTY][0].x =  1;
 	tetromino->clockwise_offset[ONE_EIGHTY][0].y = -2;
-	tetromino->clockwise_offset[ONE_EIGHTY][1].x =  6;
+	tetromino->clockwise_offset[ONE_EIGHTY][1].x =  3;
 	tetromino->clockwise_offset[ONE_EIGHTY][1].y = -2;
 	tetromino->clockwise_offset[ONE_EIGHTY][2].x =  0;
 	tetromino->clockwise_offset[ONE_EIGHTY][2].y = -2;
-	tetromino->clockwise_offset[ONE_EIGHTY][3].x =  6;
+	tetromino->clockwise_offset[ONE_EIGHTY][3].x =  3;
 	tetromino->clockwise_offset[ONE_EIGHTY][3].y = -3;
 	tetromino->clockwise_offset[ONE_EIGHTY][4].x =  0;
 	tetromino->clockwise_offset[ONE_EIGHTY][4].y =  0;
 
 	// from 180 to 270
-	tetromino->anticlockwise_offset[ONE_EIGHTY][0].x =  4;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][0].x =  2;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][0].y = -2;
-	tetromino->anticlockwise_offset[ONE_EIGHTY][1].x =  6;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][1].x =  3;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][1].y = -2;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][2].x =  0;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][2].y = -2;
-	tetromino->anticlockwise_offset[ONE_EIGHTY][3].x =  6;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][3].x =  3;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][3].y =  0;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][4].x =  0;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][4].y = -3;
 	
 	// from 270 to 180
-	tetromino->clockwise_offset[TWO_SEVENTTY][0].x = -4;
+	tetromino->clockwise_offset[TWO_SEVENTTY][0].x = -2;
 	tetromino->clockwise_offset[TWO_SEVENTTY][0].y =  2;
-	tetromino->clockwise_offset[TWO_SEVENTTY][1].x = -6;
+	tetromino->clockwise_offset[TWO_SEVENTTY][1].x = -3;
 	tetromino->clockwise_offset[TWO_SEVENTTY][1].y =  2;
 	tetromino->clockwise_offset[TWO_SEVENTTY][2].x =  0;
 	tetromino->clockwise_offset[TWO_SEVENTTY][2].y =  2;
-	tetromino->clockwise_offset[TWO_SEVENTTY][3].x = -6;
+	tetromino->clockwise_offset[TWO_SEVENTTY][3].x = -3;
 	tetromino->clockwise_offset[TWO_SEVENTTY][3].y =  0;
 	tetromino->clockwise_offset[TWO_SEVENTTY][4].x =  0;
 	tetromino->clockwise_offset[TWO_SEVENTTY][4].y =  3;
 
 	// from 270 to 0
-	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].x = -4;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].x = -2;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].y =  1;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][1].x =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][1].y =  1;
-	tetromino->anticlockwise_offset[TWO_SEVENTTY][2].x = -6;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][2].x = -3;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][2].y =  1;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].x =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].y =  0;
-	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].x = -6;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].x = -3;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].y =  3;
 }
 
@@ -543,13 +544,13 @@ inline static void SetTetrominoNull(struct Tetromino* tetromino)
 inline static void SetCommonRotationOffset(struct Tetromino* tetromino)
 {
 	// from 0 to 270
-	tetromino->clockwise_offset[ZERO][0].x =  2;
+	tetromino->clockwise_offset[ZERO][0].x =  1;
 	tetromino->clockwise_offset[ZERO][0].y =  0;
 	tetromino->clockwise_offset[ZERO][1].x =  0;
 	tetromino->clockwise_offset[ZERO][1].y =  0;
 	tetromino->clockwise_offset[ZERO][2].x =  0;
 	tetromino->clockwise_offset[ZERO][2].y = -1;
-	tetromino->clockwise_offset[ZERO][3].x =  2;
+	tetromino->clockwise_offset[ZERO][3].x =  1;
 	tetromino->clockwise_offset[ZERO][3].y =  2;
 	tetromino->clockwise_offset[ZERO][4].x =  0;
 	tetromino->clockwise_offset[ZERO][4].y =  2;
@@ -557,83 +558,83 @@ inline static void SetCommonRotationOffset(struct Tetromino* tetromino)
 	// from 0 to 90
 	tetromino->anticlockwise_offset[ZERO][0].x =  0;
 	tetromino->anticlockwise_offset[ZERO][0].y =  0;
-	tetromino->anticlockwise_offset[ZERO][1].x =  2;
+	tetromino->anticlockwise_offset[ZERO][1].x =  1;
 	tetromino->anticlockwise_offset[ZERO][1].y =  0;
-	tetromino->anticlockwise_offset[ZERO][2].x =  2;
+	tetromino->anticlockwise_offset[ZERO][2].x =  1;
 	tetromino->anticlockwise_offset[ZERO][2].y = -1;
 	tetromino->anticlockwise_offset[ZERO][3].x =  0;
 	tetromino->anticlockwise_offset[ZERO][3].y =  2;
-	tetromino->anticlockwise_offset[ZERO][4].x =  2;
+	tetromino->anticlockwise_offset[ZERO][4].x =  1;
 	tetromino->anticlockwise_offset[ZERO][4].y =  2;
 
 	// from 90 to 0
 	tetromino->clockwise_offset[NINETY][0].x =  0;
 	tetromino->clockwise_offset[NINETY][0].y =  0;
-	tetromino->clockwise_offset[NINETY][1].x = -2;
+	tetromino->clockwise_offset[NINETY][1].x = -1;
 	tetromino->clockwise_offset[NINETY][1].y =  0;
-	tetromino->clockwise_offset[NINETY][2].x = -2;
+	tetromino->clockwise_offset[NINETY][2].x = -1;
 	tetromino->clockwise_offset[NINETY][2].y =  1;
 	tetromino->clockwise_offset[NINETY][3].x =  0;
 	tetromino->clockwise_offset[NINETY][3].y = -2;
-	tetromino->clockwise_offset[NINETY][4].x = -2;
+	tetromino->clockwise_offset[NINETY][4].x = -1;
 	tetromino->clockwise_offset[NINETY][4].y = -2;
 
 	// from 90 to 180
 	tetromino->anticlockwise_offset[NINETY][0].x =  0;
 	tetromino->anticlockwise_offset[NINETY][0].y =  1;
-	tetromino->anticlockwise_offset[NINETY][1].x = -2;
+	tetromino->anticlockwise_offset[NINETY][1].x = -1;
 	tetromino->anticlockwise_offset[NINETY][1].y =  1;
-	tetromino->anticlockwise_offset[NINETY][2].x = -2;
+	tetromino->anticlockwise_offset[NINETY][2].x = -1;
 	tetromino->anticlockwise_offset[NINETY][2].y =  2;
 	tetromino->anticlockwise_offset[NINETY][3].x =  0;
 	tetromino->anticlockwise_offset[NINETY][3].y = -1;
-	tetromino->anticlockwise_offset[NINETY][4].x = -2;
+	tetromino->anticlockwise_offset[NINETY][4].x = -1;
 	tetromino->anticlockwise_offset[NINETY][4].y = -1;
 
 	// from 180 to 90
 	tetromino->clockwise_offset[ONE_EIGHTY][0].x =  0;
 	tetromino->clockwise_offset[ONE_EIGHTY][0].y = -1;
-	tetromino->clockwise_offset[ONE_EIGHTY][1].x =  2;
+	tetromino->clockwise_offset[ONE_EIGHTY][1].x =  1;
 	tetromino->clockwise_offset[ONE_EIGHTY][1].y = -1;
-	tetromino->clockwise_offset[ONE_EIGHTY][2].x =  2;
+	tetromino->clockwise_offset[ONE_EIGHTY][2].x =  1;
 	tetromino->clockwise_offset[ONE_EIGHTY][2].y = -2;
 	tetromino->clockwise_offset[ONE_EIGHTY][3].x =  0;
 	tetromino->clockwise_offset[ONE_EIGHTY][3].y =  1;
-	tetromino->clockwise_offset[ONE_EIGHTY][4].x =  2;
+	tetromino->clockwise_offset[ONE_EIGHTY][4].x =  1;
 	tetromino->clockwise_offset[ONE_EIGHTY][4].y =  1;
 
 	// from 180 to 270
-	tetromino->anticlockwise_offset[ONE_EIGHTY][0].x =  2;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][0].x =  1;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][0].y = -1;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][1].x =  0;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][1].y = -1;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][2].x =  0;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][2].y = -2;
-	tetromino->anticlockwise_offset[ONE_EIGHTY][3].x =  2;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][3].x =  1;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][3].y =  1;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][4].x =  0;
 	tetromino->anticlockwise_offset[ONE_EIGHTY][4].y =  1;
 	
 	// from 270 to 180
-	tetromino->clockwise_offset[TWO_SEVENTTY][0].x = -2;
+	tetromino->clockwise_offset[TWO_SEVENTTY][0].x = -1;
 	tetromino->clockwise_offset[TWO_SEVENTTY][0].y =  1;
 	tetromino->clockwise_offset[TWO_SEVENTTY][1].x =  0;
 	tetromino->clockwise_offset[TWO_SEVENTTY][1].y =  1;
 	tetromino->clockwise_offset[TWO_SEVENTTY][2].x =  0;
 	tetromino->clockwise_offset[TWO_SEVENTTY][2].y =  2;
-	tetromino->clockwise_offset[TWO_SEVENTTY][3].x = -2;
+	tetromino->clockwise_offset[TWO_SEVENTTY][3].x = -1;
 	tetromino->clockwise_offset[TWO_SEVENTTY][3].y = -1;
 	tetromino->clockwise_offset[TWO_SEVENTTY][4].x =  0;
 	tetromino->clockwise_offset[TWO_SEVENTTY][4].y = -1;
 
 	// from 270 to 0
-	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].x = -2;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].x = -1;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].y =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][1].x =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][1].y =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][2].x =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][2].y =  1;
-	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].x = -2;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].x = -1;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].y = -2;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].x =  0;
 	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].y = -2;
@@ -642,6 +643,60 @@ inline static void SetCommonRotationOffset(struct Tetromino* tetromino)
 inline static unsigned short int RandomIndex(void)
 {
 	return (unsigned short int) (rand() % 7);
+}
+
+inline static void SetColor(struct Tetromino* tetromino)
+{
+	switch (tetromino->type)
+	{
+	case I:
+		printf(ESC CYAN);
+
+		break;
+
+	case O:
+		printf(ESC YELLOW);
+
+		break;
+
+	case T:
+		printf(ESC PINK);
+
+		break;
+
+	case J:
+		printf(ESC BLUE);
+
+		break;
+
+	case L:
+		printf(ESC ORANGE);
+
+		break;
+
+	case S:
+		printf(ESC GREEN);
+
+		break;
+
+	case Z:
+		printf(ESC RED);
+
+		break;
+	}
+}
+
+inline static void PredictTetromino(void)
+{
+	prediction = current;
+	while (CheckTetromino(&prediction))
+	{
+		++prediction.index.y;
+	}
+	--prediction.index.y;
+
+	printf(ESC GREY);
+	PrintTetromino(&prediction);
 }
 
 inline static void Game(void)
@@ -660,19 +715,14 @@ inline static void Game(void)
 	SetTetrominoNull(&current);
 	SetTetrominoNull(&next);
 
-	next.index.y = SCREEN_HEIGHT - 3;
 	SetTetromino[RandomIndex()](&next);
-	// accross the game width and normal padding and
-	// in the middle of scoreboard
-	next.index.x = (GAME_WIDTH + 3) + (13 - next.dimensions.x);
 
 	SetColor(&next);
-	PrintTetromino(&next);
+	PrintNextTetromino();
 
 	SetTetromino[RandomIndex()](&current);
-	current.index.x = 8;
+	current.index.x = 4;
 	current.index.y = 0;
-
 
 	while (CheckTetromino(&current))
 	{
@@ -704,25 +754,25 @@ static void PrintTetromino(struct Tetromino* tetromino)
 			case ZERO:
 				if (tetromino->index.y + i < 0)
 					continue;
-				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (j * 2), padding.y + tetromino->index.y + i });
+				Goto((cordinates) { padding.x + 2 + (tetromino->index.x * 2) + (j * 2), padding.y + tetromino->index.y + i });
 				break;
 
 			case NINETY:
 				if (tetromino->index.y + (tetromino->dimensions.x - 1) - j < 0)
 					continue;
-				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (i * 2), padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j });
+				Goto((cordinates) { padding.x + 2 + (tetromino->index.x * 2) + (i * 2), padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j });
 				break;
 
 			case ONE_EIGHTY:
 				if (tetromino->index.y + (tetromino->dimensions.y - (i + 1)) < 0)
 					continue;
-				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.x - (j + 1)) * 2), padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) });
+				Goto((cordinates) { padding.x + 2 + (tetromino->index.x * 2) + ((tetromino->dimensions.x - (j + 1)) * 2), padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) });
 				break;
 
 			case TWO_SEVENTTY:
 				if (tetromino->index.y + j < 0)
 					continue;
-				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.y - (i + 1)) * 2), padding.y + tetromino->index.y + j });
+				Goto((cordinates) { padding.x + 2 + (tetromino->index.x * 2) + ((tetromino->dimensions.y - (i + 1)) * 2), padding.y + tetromino->index.y + j });
 				break;
 			}
 
@@ -751,25 +801,25 @@ static void EraseTetromino(struct Tetromino* tetromino)
 			case ZERO:
 				if (tetromino->index.y + i < 0)
 					continue;
-				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (j * 2), padding.y + tetromino->index.y + i });
+				Goto((cordinates) { padding.x + 2 + (tetromino->index.x * 2) + (j * 2), padding.y + tetromino->index.y + i });
 				break;
 
 			case NINETY:
 				if (tetromino->index.y + (tetromino->dimensions.x - 1) - j < 0)
 					continue;
-				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (i * 2), padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j });
+				Goto((cordinates) { padding.x + 2 + (tetromino->index.x * 2) + (i * 2), padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j });
 				break;
 
 			case ONE_EIGHTY:
 				if (tetromino->index.y + (tetromino->dimensions.y - (i + 1)) < 0)
 					continue;
-				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.x - (j + 1)) * 2), padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) });
+				Goto((cordinates) { padding.x + 2 + (tetromino->index.x * 2) + ((tetromino->dimensions.x - (j + 1)) * 2), padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) });
 				break;
 
 			case TWO_SEVENTTY:
 				if (tetromino->index.y + j < 0)
 					continue;
-				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.y - (i + 1)) * 2), padding.y + tetromino->index.y + j });
+				Goto((cordinates) { padding.x + 2 + (tetromino->index.x * 2) + ((tetromino->dimensions.y - (i + 1)) * 2), padding.y + tetromino->index.y + j });
 				break;
 			}
 
@@ -802,7 +852,7 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 					GetStdHandle(STD_OUTPUT_HANDLE),
 					&c,
 					1,
-					(COORD) { padding.x + 2 + tetromino->index.x + (j * 2) - 1, padding.y + tetromino->index.y + i - 1},
+					(COORD) { padding.x + 2 + (tetromino->index.x * 2) + (j * 2) - 1, padding.y + tetromino->index.y + i - 1},
 					&count);
 				break;
 
@@ -813,7 +863,7 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 					GetStdHandle(STD_OUTPUT_HANDLE),
 					&c,
 					1,
-					(COORD) { padding.x + 2 + tetromino->index.x + (i * 2) - 1, padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j - 1},
+					(COORD) { padding.x + 2 + (tetromino->index.x * 2) + (i * 2) - 1, padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j - 1},
 					&count);
 				break;
 
@@ -824,7 +874,7 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 					GetStdHandle(STD_OUTPUT_HANDLE),
 					&c,
 					1,
-					(COORD) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.x - (j + 1)) * 2) - 1, padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) - 1},
+					(COORD) { padding.x + 2 + (tetromino->index.x * 2) + ((tetromino->dimensions.x - (j + 1)) * 2) - 1, padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) - 1},
 					&count);
 				break;
 
@@ -835,7 +885,7 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 					GetStdHandle(STD_OUTPUT_HANDLE),
 					&c,
 					1,
-					(COORD) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.y - (i + 1)) * 2) - 1, padding.y + tetromino->index.y + j - 1},
+					(COORD) { padding.x + 2 + (tetromino->index.x * 2) + ((tetromino->dimensions.y - (i + 1)) * 2) - 1, padding.y + tetromino->index.y + j - 1},
 					&count);
 				break;
 			}
@@ -848,6 +898,27 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 	}
 
 	return true;
+}
+
+inline static void PrintNextTetromino(void)
+{
+	// accross the game width and normal padding and
+	// in the middle of scoreboard
+	for (int i = 0; i < next.dimensions.y; i++)
+	{
+		Goto((cordinates) { padding.x + 2 + (GAME_WIDTH + 3) + (13 - next.dimensions.x), padding.y + SCREEN_HEIGHT - 3 + i });
+		for (int j = 0; j < next.dimensions.x; j++)
+		{
+			if (next.tetromino[i][j])
+			{
+				printf("[]");
+			}
+			else
+			{
+				printf("  ");
+			}
+		}
+	}
 }
 
 // I am guilty of using chatgbt here
@@ -898,7 +969,7 @@ inline static void WaitForInput(void)
 				EraseTetromino(&prediction);
 				EraseTetromino(&current);
 
-				current.index.x += 2;
+				++current.index.x;
 
 				if (!CheckTetromino(&current))
 				{
@@ -920,7 +991,7 @@ inline static void WaitForInput(void)
 				EraseTetromino(&prediction);
 				EraseTetromino(&current);
 
-				current.index.x -= 2;
+				--current.index.x;
 				if (!CheckTetromino(&current))
 				{
 					current = previous;
@@ -1025,58 +1096,4 @@ inline static void RotateClockwise(void)
 	current = previous;
 
 End:	;
-}
-
-inline static void SetColor(struct Tetromino* tetromino)
-{
-	switch (tetromino->type)
-	{
-	case I:
-		printf(ESC CYAN);
-
-		break;
-
-	case O:
-		printf(ESC YELLOW);
-
-		break;
-
-	case T:
-		printf(ESC PINK);
-
-		break;
-
-	case J:
-		printf(ESC BLUE);
-
-		break;
-
-	case L:
-		printf(ESC ORANGE);
-
-		break;
-
-	case S:
-		printf(ESC GREEN);
-
-		break;
-
-	case Z:
-		printf(ESC RED);
-
-		break;
-	}
-}
-
-inline static void PredictTetromino(void)
-{
-	prediction = current;
-	while (CheckTetromino(&prediction))
-	{
-		++prediction.index.y;
-	}
-	--prediction.index.y;
-
-	printf(ESC GREY);
-	PrintTetromino(&prediction);
 }
