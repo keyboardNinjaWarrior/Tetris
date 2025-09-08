@@ -707,6 +707,9 @@ static void PrintTetromino(struct Tetromino* tetromino)
 	}
 }
 
+// The if statement in each case is for the checking
+// if any turn has caused the tetromino to start from
+// index or fall bellow 0 y-axis
 static void EraseTetromino(struct Tetromino* tetromino)
 {
 	for (int i = 0; i < tetromino->dimensions.y; i++)
