@@ -672,18 +672,26 @@ static void PrintTetromino(struct Tetromino* tetromino)
 			switch (tetromino->angle)
 			{
 			case ZERO:
+				if (tetromino->index.y + i < 0)
+					continue;
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (j * 2), padding.y + tetromino->index.y + i });
 				break;
 
 			case NINETY:
+				if (tetromino->index.y + (tetromino->dimensions.x - 1) - j < 0)
+					continue;
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (i * 2), padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j });
 				break;
 
 			case ONE_EIGHTY:
+				if (tetromino->index.y + (tetromino->dimensions.y - (i + 1)) < 0)
+					continue;
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.x - (j + 1)) * 2), padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) });
 				break;
 
 			case TWO_SEVENTTY:
+				if (tetromino->index.y + j < 0)
+					continue;
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.y - (i + 1)) * 2), padding.y + tetromino->index.y + j });
 				break;
 			}
@@ -708,18 +716,26 @@ static void EraseTetromino(struct Tetromino* tetromino)
 			switch (tetromino->angle)
 			{
 			case ZERO:
+				if (tetromino->index.y + i < 0)
+					continue;
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (j * 2), padding.y + tetromino->index.y + i });
 				break;
 
 			case NINETY:
+				if (tetromino->index.y + (tetromino->dimensions.x - 1) - j < 0)
+					continue;
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + (i * 2), padding.y + tetromino->index.y + (tetromino->dimensions.x - 1) - j });
 				break;
 
 			case ONE_EIGHTY:
+				if (tetromino->index.y + (tetromino->dimensions.y - (i + 1)) < 0)
+					continue;
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.x - (j + 1)) * 2), padding.y + tetromino->index.y + (tetromino->dimensions.y - (i + 1)) });
 				break;
 
 			case TWO_SEVENTTY:
+				if (tetromino->index.y + j < 0)
+					continue;
 				Goto((cordinates) { padding.x + 2 + tetromino->index.x + ((tetromino->dimensions.y - (i + 1)) * 2), padding.y + tetromino->index.y + j });
 				break;
 			}
@@ -747,6 +763,8 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 			switch(tetromino->angle)
 			{
 			case ZERO:
+				if (tetromino->index.y + i < 0)
+					continue;
 				ReadConsoleOutputCharacter(
 					GetStdHandle(STD_OUTPUT_HANDLE),
 					&c,
@@ -756,6 +774,8 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 				break;
 
 			case NINETY:
+				if (tetromino->index.y + (tetromino->dimensions.x - 1) - j < 0)
+					continue;
 				ReadConsoleOutputCharacter(
 					GetStdHandle(STD_OUTPUT_HANDLE),
 					&c,
@@ -765,6 +785,8 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 				break;
 
 			case ONE_EIGHTY:
+				if (tetromino->index.y + (tetromino->dimensions.y - (i + 1)) < 0)
+					continue;
 				ReadConsoleOutputCharacter(
 					GetStdHandle(STD_OUTPUT_HANDLE),
 					&c,
@@ -774,6 +796,8 @@ static bool CheckTetromino(struct Tetromino* tetromino)
 				break;
 
 			case TWO_SEVENTTY:
+				if (tetromino->index.y + j < 0)
+					continue;
 				ReadConsoleOutputCharacter(
 					GetStdHandle(STD_OUTPUT_HANDLE),
 					&c,
