@@ -32,6 +32,15 @@
 #define BOTTOM_RIGHT_CORNER	"\x6a"					// └
 #define BOTTOM_LEFT_CORNER	"\x6d"			// ┘
 
+#define CYAN				"[38;2;0;255;255"
+#define YELLOW				"[38;2;255;255;0"
+#define PINK				"[38;2;255;192;203"
+#define BLUE				"[38;2;0;0;255"
+#define ORANGE				"[38;2;255;165;0"
+#define GREEN				"[38;2;0;255;0"
+#define RED					"[38;2;255;0;0"
+#define NORMAL				"[0m"
+
 struct cordinates
 {
 	short int x;
@@ -81,6 +90,7 @@ inline static void SetTetrominoS				(struct Tetromino*);
 inline static void SetTetrominoO				(struct Tetromino*);
 inline static void SetTetrominoNull				(struct Tetromino*);
 inline static void SetCommonRotationOffset		(struct Tetromino*);
+inline static void SetColor						(struct Tetromino*);
 inline static void Goto							(struct cordinates);
 inline static unsigned short int RandomIndex	(void);
 
@@ -665,6 +675,7 @@ inline static void Game(void)
 
 static void PrintTetromino(struct Tetromino* tetromino)
 {
+	SetColor(tetromino);
 	for (int i = 0; i < tetromino->dimensions.y; i++)
 	{
 		for (int j = 0; j < tetromino->dimensions.x; j++)
@@ -705,6 +716,8 @@ static void PrintTetromino(struct Tetromino* tetromino)
 			printf(ESC CUF(2));
 		}
 	}
+
+	printf(ESC NORMAL);
 }
 
 // The if statement in each case is for the checking
@@ -964,4 +977,45 @@ inline static void RotateClockwise(void)
 
 Print:
 	PrintTetromino(&current);
+}
+
+inline static void SetColor(struct Tetromino* tetromino)
+{
+	switch (tetromino->type)
+	{
+	case I:
+		printf(ESC CYAN);
+
+		break;
+
+	case O:
+		printf(ESC YELLOW);
+
+		break;
+
+	case T:
+		printf(ESC PINK);
+
+		break;
+
+	case J:
+		printf(ESC BLUE);
+
+		break;
+
+	case L:
+		printf(ESC ORANGE);
+
+		break;
+
+	case S:
+		printf(ESC GREEN);
+
+		break;
+
+	case Z:
+		printf(ESC RED);
+
+		break;
+	}
 }
