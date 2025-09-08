@@ -32,14 +32,15 @@
 #define BOTTOM_RIGHT_CORNER	"\x6a"					// └
 #define BOTTOM_LEFT_CORNER	"\x6d"			// ┘
 
-#define CYAN				"[38;2;0;255;255"
-#define YELLOW				"[38;2;255;255;0"
-#define PINK				"[38;2;255;192;203"
-#define BLUE				"[38;2;0;0;255"
-#define ORANGE				"[38;2;255;165;0"
-#define GREEN				"[38;2;0;255;0"
-#define RED					"[38;2;255;0;0"
-#define NORMAL				"[0m"
+#define CYAN				"[38;2;0;255;255m"
+#define YELLOW				"[38;2;255;255;0m"
+#define PINK				"[38;2;255;192;203m"
+#define BLUE				"[38;2;0;0;255m"
+#define ORANGE				"[38;2;255;165;0m"
+#define GREEN				"[38;2;0;255;0m"
+#define RED					"[38;2;255;0;0m"
+#define GREY				"[38;2;128;128;128m"
+#define DEFAULT				"[0m"
 
 struct cordinates
 {
@@ -48,7 +49,7 @@ struct cordinates
 } padding = { 0,0 };
 typedef struct cordinates cordinates;
 
-enum { I, J, L, O, S, T, Z, EMPTY };
+enum type { I, J, L, O, S, T, Z, EMPTY };
 enum rotation { ZERO, NINETY, ONE_EIGHTY, TWO_SEVENTTY };
 
 struct Tetromino
@@ -62,7 +63,14 @@ struct Tetromino
 
 	cordinates clockwise_offset[4][5];
 	cordinates anticlockwise_offset[4][5];
-} current, next, previous;
+} current, next, previous, prediction;
+
+// Screen height = 20 + 2 (extra rows)
+struct
+{
+	bool pixel;
+	enum type color;
+} grid[SCREEN_HEIGHT][GAME_WIDTH / 2];
 
 // functions
 static void GetAnyInput							(void);
@@ -75,6 +83,7 @@ inline static void WaitForInput					(void);
 inline static void SetGameScreen				(void);
 inline static void SetEmptyScreen				(void);
 inline static void RotateClockwise				(void);
+inline static void PredictTetromino				(void);
 inline static void SetInitialScreen				(void);
 inline static void SetNewScreenBuffer			(void);
 inline static void GetConsoleDimensions			(void);
@@ -656,26 +665,37 @@ inline static void Game(void)
 	// accross the game width and normal padding and
 	// in the middle of scoreboard
 	next.index.x = (GAME_WIDTH + 3) + (13 - next.dimensions.x);
+
+	SetColor(&next);
 	PrintTetromino(&next);
 
 	SetTetromino[RandomIndex()](&current);
 	current.index.x = 8;
 	current.index.y = 0;
 
+
 	while (CheckTetromino(&current))
 	{
+		// predictory tetromino
+		PredictTetromino();
+
+		SetColor(&current);
 		PrintTetromino(&current);
+
 		WaitForInput();
+
+		EraseTetromino(&prediction);
 		EraseTetromino(&current);
+
 		++current.index.y;
 	}
 
+	printf(ESC DEFAULT);
 	GetAnyInput();
 }
 
 static void PrintTetromino(struct Tetromino* tetromino)
 {
-	SetColor(tetromino);
 	for (int i = 0; i < tetromino->dimensions.y; i++)
 	{
 		for (int j = 0; j < tetromino->dimensions.x; j++)
@@ -716,8 +736,6 @@ static void PrintTetromino(struct Tetromino* tetromino)
 			printf(ESC CUF(2));
 		}
 	}
-
-	printf(ESC NORMAL);
 }
 
 // The if statement in each case is for the checking
@@ -857,7 +875,13 @@ inline static void WaitForInput(void)
 				// Up key is pressed
 				// flips backward
 
+				EraseTetromino(&prediction);
+
 				RotateClockwise();
+				PredictTetromino();
+
+				SetColor(&current);
+				PrintTetromino(&current);
 
 				break;
 
@@ -871,12 +895,20 @@ inline static void WaitForInput(void)
 				// Right key is pressed
 
 				previous = current;
+
+				EraseTetromino(&prediction);
 				EraseTetromino(&current);
+
 				current.index.x += 2;
+
 				if (!CheckTetromino(&current))
 				{
 					current = previous;
 				}
+
+				PredictTetromino();
+
+				SetColor(&current);
 				PrintTetromino(&current);
 
 				break;
@@ -885,25 +917,44 @@ inline static void WaitForInput(void)
 				// Left key is pressed
 
 				previous = current;
+
+				EraseTetromino(&prediction);
 				EraseTetromino(&current);
+
 				current.index.x -= 2;
 				if (!CheckTetromino(&current))
 				{
 					current = previous;
 				}
+
+				PredictTetromino();
+
+				SetColor(&current);
 				PrintTetromino(&current);
 
 				break;
 
 			case ' ':
 				// Space is pressed
-				break;
+
+				EraseTetromino(&prediction);
+				EraseTetromino(&current);
+
+				current = prediction;
+
+				return;
 
 			case 'z':
 				// 'z' is pressed
 				// flips forwardgi
 
+				EraseTetromino(&prediction);
+
 				RotateCounterclockwise();
+				PredictTetromino();
+
+				SetColor(&current);
+				PrintTetromino(&current);
 
 				break;
 			}
@@ -931,7 +982,7 @@ inline static void RotateCounterclockwise(void)
 
 		if (CheckTetromino(&current))
 		{
-			goto Print;
+			goto End;
 		}
 
 		current.index.x -= current.anticlockwise_offset[previous.angle][i].x;
@@ -941,8 +992,7 @@ inline static void RotateCounterclockwise(void)
 
 	current = previous;
 
-Print:
-	PrintTetromino(&current);
+End:		;
 }
 
 inline static void RotateClockwise(void)
@@ -965,7 +1015,7 @@ inline static void RotateClockwise(void)
 
 		if (CheckTetromino(&current))
 		{
-			goto Print;
+			goto End;
 		}
 
 		current.index.x -= current.clockwise_offset[previous.angle][i].x;
@@ -975,8 +1025,7 @@ inline static void RotateClockwise(void)
 
 	current = previous;
 
-Print:
-	PrintTetromino(&current);
+End:	;
 }
 
 inline static void SetColor(struct Tetromino* tetromino)
@@ -1018,4 +1067,17 @@ inline static void SetColor(struct Tetromino* tetromino)
 
 		break;
 	}
+}
+
+inline static void PredictTetromino(void)
+{
+	prediction = current;
+	while (CheckTetromino(&prediction))
+	{
+		++prediction.index.y;
+	}
+	--prediction.index.y;
+
+	printf(ESC GREY);
+	PrintTetromino(&prediction);
 }
