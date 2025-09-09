@@ -79,6 +79,7 @@ static void PrintTetromino						(struct Tetromino*);
 static void EraseTetromino						(struct Tetromino*);
 static bool CheckTetromino						(struct Tetromino*);
 inline static void Game							(void);
+inline static void SaveGrid						(void);
 inline static void ExitTetris					(void);
 inline static void WaitForInput					(void);
 inline static void SetGameScreen				(void);
@@ -740,7 +741,7 @@ inline static void Game(void)
 		--current.index.y;
 	}
 
-	++current.index.y;
+	SaveGrid();
 
 	printf(ESC DEFAULT);
 	GetAnyInput();
@@ -920,6 +921,38 @@ inline static void PrintNextTetromino(void)
 			else
 			{
 				printf(ESC CUF(2));
+			}
+		}
+	}
+}
+
+inline static void SaveGrid(void)
+{
+	for (int i = 0; i < current.dimensions.y; i++)
+	{
+		for (int j = 0; j < current.dimensions.x; j++)
+		{
+			switch (current.angle)
+			{
+			case ZERO:
+				grid[current.index.y - i][current.index.x + j].pixel = current.tetromino[i][j];
+				grid[current.index.y - i][current.index.x + j].color = current.type;
+				break;
+
+			case NINETY:
+				grid[current.index.y - (current.dimensions.x - (j + 1))][current.index.x + i].pixel = current.tetromino[i][j];
+				grid[current.index.y - (current.dimensions.x - (j + 1))][current.index.x + i].color = current.type;
+				break;
+
+			case ONE_EIGHTY:
+				grid[current.index.y - (current.dimensions.y - (i + 1))][current.index.x + (current.dimensions.x - (j + 1))].pixel = current.tetromino[i][j];
+				grid[current.index.y - (current.dimensions.y - (i + 1))][current.index.x + (current.dimensions.x - (j + 1))].color = current.type;
+				break;
+
+			case TWO_SEVENTTY:
+				grid[current.index.y - j][current.index.x + (current.dimensions.y - (i + 1))].pixel = current.tetromino[i][j];
+				grid[current.index.y - j][current.index.x + (current.dimensions.y - (i + 1))].color = current.type;
+				break;
 			}
 		}
 	}
