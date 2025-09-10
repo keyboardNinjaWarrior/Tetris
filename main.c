@@ -57,7 +57,7 @@ struct Tetromino
 {
 	bool tetromino[TETROMINO_HEIGHT][TETROMINO_WIDTH];
 
-	short int type;
+	enum type type;
 	struct cordinates dimensions;
 	struct cordinates index;
 	enum rotation angle;
@@ -73,6 +73,8 @@ struct
 	enum type color;
 } grid[GAME_HEIGHT + 2][GAME_WIDTH];
 
+short int complete_rows[4];
+
 // functions
 static void GetAnyInput							(void);
 static void PrintTetromino						(struct Tetromino*);
@@ -80,6 +82,7 @@ static void EraseTetromino						(struct Tetromino*);
 static bool CheckTetromino						(struct Tetromino*);
 inline static void Game							(void);
 inline static void SaveGrid						(void);
+inline static void PrintGrid					(void);
 inline static void ExitTetris					(void);
 inline static void WaitForInput					(void);
 inline static void SetGameScreen				(void);
@@ -102,8 +105,8 @@ inline static void SetTetrominoS				(struct Tetromino*);
 inline static void SetTetrominoO				(struct Tetromino*);
 inline static void SetTetrominoNull				(struct Tetromino*);
 inline static void SetCommonRotationOffset		(struct Tetromino*);
-inline static void SetColor						(struct Tetromino*);
 inline static void Goto							(struct cordinates);
+inline static void SetColor						(enum type*);
 inline static unsigned short int RandomIndex	(void);
 
 int main(void)
@@ -647,9 +650,9 @@ inline static unsigned short int RandomIndex(void)
 	return (unsigned short int) (rand() % 7);
 }
 
-inline static void SetColor(struct Tetromino* tetromino)
+inline static void SetColor(enum type *color)
 {
-	switch (tetromino->type)
+	switch (*color)
 	{
 	case I:
 		printf(ESC CYAN);
@@ -719,29 +722,35 @@ inline static void Game(void)
 
 	SetTetromino[RandomIndex()](&next);
 
-	SetColor(&next);
+	SetColor(&next.type);
 	PrintNextTetromino();
 
-	SetTetromino[RandomIndex()](&current);
-	current.index.x = 4;
-	current.index.y = GAME_HEIGHT;
 	
-	while (CheckTetromino(&current))
+	while (true)
 	{
-		PredictTetromino();
+		SetTetromino[RandomIndex()](&current);
+		current.index.x = 4;
+		current.index.y = GAME_HEIGHT;
+		
+		while (CheckTetromino(&current))
+		{
+			PredictTetromino();
 
-		SetColor(&current);
-		PrintTetromino(&current);
+			SetColor(&current.type);
+			PrintTetromino(&current);
 
-		WaitForInput();
+			WaitForInput();
 
-		EraseTetromino(&prediction);
-		EraseTetromino(&current);
+			EraseTetromino(&prediction);
+			EraseTetromino(&current);
 
-		--current.index.y;
+			--current.index.y;
+		}
+
+		SaveGrid();
+		SetTetrominoNull(&current);
+		PrintGrid();
 	}
-
-	SaveGrid();
 
 	printf(ESC DEFAULT);
 	GetAnyInput();
@@ -987,7 +996,7 @@ inline static void WaitForInput(void)
 				RotateClockwise();
 				PredictTetromino();
 
-				SetColor(&current);
+				SetColor(&current.type);
 				PrintTetromino(&current);
 
 				break;
@@ -1015,7 +1024,7 @@ inline static void WaitForInput(void)
 
 				PredictTetromino();
 
-				SetColor(&current);
+				SetColor(&current.type);
 				PrintTetromino(&current);
 
 				break;
@@ -1036,7 +1045,7 @@ inline static void WaitForInput(void)
 
 				PredictTetromino();
 
-				SetColor(&current);
+				SetColor(&current.type);
 				PrintTetromino(&current);
 
 				break;
@@ -1060,7 +1069,7 @@ inline static void WaitForInput(void)
 				RotateCounterclockwise();
 				PredictTetromino();
 
-				SetColor(&current);
+				SetColor(&current.type);
 				PrintTetromino(&current);
 
 				break;
@@ -1094,7 +1103,6 @@ inline static void RotateCounterclockwise(void)
 
 		current.index.x -= current.anticlockwise_offset[previous.angle][i].x;
 		current.index.y -= current.anticlockwise_offset[previous.angle][i].y;
-
 	}
 
 	current = previous;
@@ -1133,4 +1141,46 @@ inline static void RotateClockwise(void)
 	current = previous;
 
 End:	;
+}
+
+// There is an alternative sollution I thought:
+// 1. Use a single variable row and store three states in it
+// 2. Allocate memory for completed_rows
+
+inline static void PrintGrid(void)
+{
+	bool row = false;
+	bool complete_row;
+
+	for (int i = 0; i < GAME_HEIGHT && !row; i++)
+	{
+		complete_row = true;
+
+		for (int j = 0; j < GAME_WIDTH; j++)
+		{
+			if (grid[i][j].pixel)
+			{
+				SetColor(&grid[i][j].color);
+				Goto((cordinates) { padding.x + 2 + (j * 2), padding.y + (GAME_HEIGHT - 1) - i });
+				printf("[]");
+
+				if (!row) row = true;
+
+				continue;
+			}
+
+			if (complete_row) complete_row = false;
+		}
+
+		
+		if (complete_row) 
+		{
+			int k;
+
+			for (k = 0; k < 4; k++) complete_rows[k] = -1;
+			for (k = 0; complete_rows[k] != -1 && k < 4; k++);
+			
+			complete_rows[k] = i;
+		}	
+	}
 }
