@@ -50,7 +50,7 @@ struct cordinates
 } padding = { 0,0 };
 typedef struct cordinates cordinates;
 
-enum type { I, J, L, O, S, T, Z, EMPTY };
+enum type { EMPTY, I, J, L, O, S, T, Z };
 enum rotation { ZERO, NINETY, ONE_EIGHTY, TWO_SEVENTTY };
 
 struct Tetromino
@@ -67,22 +67,24 @@ struct Tetromino
 } current, next, previous, prediction;
 
 // Screen height = 20 + 2 (extra rows)
-struct
+struct Grid
 {
 	bool pixel;
 	enum type color;
 } grid[GAME_HEIGHT + 2][GAME_WIDTH];
+typedef struct Grid Grid;
 
-short int complete_rows[4];
+short int complete_rows[4] = { -1,-1,-1,-1 };
 
 // functions
 static void GetAnyInput							(void);
+static bool CheckTetromino						(struct Tetromino*);
 static void PrintTetromino						(struct Tetromino*);
 static void EraseTetromino						(struct Tetromino*);
-static bool CheckTetromino						(struct Tetromino*);
+inline static bool PrintGrid					(void);
 inline static void Game							(void);
 inline static void SaveGrid						(void);
-inline static void PrintGrid					(void);
+inline static void EraseGrid					(void);
 inline static void ExitTetris					(void);
 inline static void WaitForInput					(void);
 inline static void SetGameScreen				(void);
@@ -90,12 +92,13 @@ inline static void SetEmptyScreen				(void);
 inline static void RotateClockwise				(void);
 inline static void PredictTetromino				(void);
 inline static void SetInitialScreen				(void);
+inline static void RemoveCompleteRows			(void);
 inline static void PrintNextTetromino			(void);
 inline static void SetNewScreenBuffer			(void);
 inline static void GetConsoleDimensions			(void);
 inline static void RotateCounterclockwise		(void);
 inline static void SetWindowsTitle				(char*);
-inline static void WriteOnScreen				(char[SCREEN_WIDTH], cordinates);
+inline static void SetColor						(enum type*);
 inline static void SetTetrominoI				(struct Tetromino*);
 inline static void SetTetrominoT				(struct Tetromino*);
 inline static void SetTetrominoL				(struct Tetromino*);
@@ -106,7 +109,7 @@ inline static void SetTetrominoO				(struct Tetromino*);
 inline static void SetTetrominoNull				(struct Tetromino*);
 inline static void SetCommonRotationOffset		(struct Tetromino*);
 inline static void Goto							(struct cordinates);
-inline static void SetColor						(enum type*);
+inline static void WriteOnScreen				(char[SCREEN_WIDTH], cordinates);
 inline static unsigned short int RandomIndex	(void);
 
 int main(void)
@@ -749,6 +752,11 @@ inline static void Game(void)
 
 		SaveGrid();
 		SetTetrominoNull(&current);
+		
+		// PrintGrid also checks for complete rows
+		// It would be ugly  so I didn't rename it
+		// The  functionality   is baked into  the 
+		// function
 		PrintGrid();
 	}
 
@@ -941,6 +949,8 @@ inline static void SaveGrid(void)
 	{
 		for (int j = 0; j < current.dimensions.x; j++)
 		{
+			if (!current.tetromino[i][j])	continue;
+
 			switch (current.angle)
 			{
 			case ZERO:
@@ -1147,15 +1157,14 @@ End:	;
 // 1. Use a single variable row and store three states in it
 // 2. Allocate memory for completed_rows
 
-inline static void PrintGrid(void)
+inline static bool PrintGrid(void)
 {
-	bool row = false;
-	bool complete_row;
+	bool row = false, complete_row;
+	short int k = 0;
 
-	for (int i = 0; i < GAME_HEIGHT && !row; i++)
+	for (int i = 0; i < GAME_HEIGHT; i++)
 	{
 		complete_row = true;
-
 		for (int j = 0; j < GAME_WIDTH; j++)
 		{
 			if (grid[i][j].pixel)
@@ -1169,18 +1178,32 @@ inline static void PrintGrid(void)
 				continue;
 			}
 
-			if (complete_row) complete_row = false;
+			complete_row = false;
 		}
-
 		
-		if (complete_row) 
-		{
-			int k;
+		if (complete_row && k < 4)	complete_rows[k++] = i;
+		if (!row)	break;
+	}
 
-			for (k = 0; k < 4; k++) complete_rows[k] = -1;
-			for (k = 0; complete_rows[k] != -1 && k < 4; k++);
-			
-			complete_rows[k] = i;
-		}	
+	return complete_rows[0] != -1 ? true : false;
+}
+
+inline static void RemoveCompleteRows(void)
+{
+	return;
+}
+
+inline static void EraseGrid(void)
+{
+	for (int i = 0; i < GAME_HEIGHT; i++)
+	{
+		for (int j = 0; j < GAME_WIDTH; j++)
+		{
+			if (grid[i][j].pixel)
+			{
+				Goto((cordinates) { padding.x + 2 + (j * 2), padding.y + (GAME_HEIGHT - 1) - i });
+				printf("  ");
+			}
+		}
 	}
 }
