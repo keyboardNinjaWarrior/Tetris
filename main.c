@@ -757,7 +757,14 @@ inline static void Game(void)
 		// It would be ugly  so I didn't rename it
 		// The  functionality   is baked into  the 
 		// function
-		PrintGrid();
+
+	Print:
+		if (PrintGrid())
+		{
+			EraseGrid();
+			RemoveCompleteRows();
+			goto Print;
+		}
 	}
 
 	printf(ESC DEFAULT);
@@ -1190,7 +1197,37 @@ inline static bool PrintGrid(void)
 
 inline static void RemoveCompleteRows(void)
 {
-	return;
+	int i = complete_rows[0];
+	complete_rows[0] = -1;
+	short int j = 1, difference = 1;
+	bool row;
+
+	for (; i < GAME_HEIGHT + 2; i++)
+	{
+
+		while (j < 4 && complete_rows[j] == i + difference)
+		{
+			++difference;
+			complete_rows[j++] = -1;
+		}
+
+		row = false;
+		for (int k = 0; k < GAME_WIDTH; k++)
+		{
+			if (grid[i][k].pixel)	row = true;
+			
+			if (i + difference <= GAME_HEIGHT + 1)
+			{
+				grid[i][k] = grid[i + difference][k];
+			}
+			else
+			{
+				grid[i][k] = (Grid){ false, EMPTY };
+			}
+		}
+
+		if (!row)	break;
+	}
 }
 
 inline static void EraseGrid(void)
