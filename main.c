@@ -93,6 +93,7 @@ inline static void SetEmptyScreen				(void);
 inline static void RotateClockwise				(void);
 inline static void PredictTetromino				(void);
 inline static void SetInitialScreen				(void);
+inline static void EraseNextTetromino			(void);
 inline static void RemoveCompleteRows			(void);
 inline static void PrintNextTetromino			(void);
 inline static void SetNewScreenBuffer			(void);
@@ -162,6 +163,7 @@ inline static void ExitTetris(void)
 {
 	printf(ESC MAIN);							  // restores to the main buffer
 	printf(ESC CUR_SHOW);						  // show cursor
+	printf(ESC DEFAULT);
 }
 
 inline static void GetConsoleDimensions(void)
@@ -725,18 +727,26 @@ inline static void Game(void)
 	SetTetrominoNull(&next);
 
 	SetTetromino[RandomIndex()](&next);
-
-	SetColor(&next.type);
-	PrintNextTetromino();
-
 	
 	while (true)
 	{
-		SetTetromino[RandomIndex()](&current);
+		current = next;
+		EraseNextTetromino();
+		SetTetrominoNull(&next);
+
+		SetTetromino[RandomIndex()](&next);
+		SetColor(&next.type);
+		PrintNextTetromino();
+
 		current.index.x = 4;
 		current.index.y = GAME_HEIGHT;
+
+		if (! CheckTetromino(&current))
+		{
+			break;
+		}
 		
-		while (CheckTetromino(&current))
+		do 
 		{
 			PredictTetromino();
 
@@ -749,17 +759,17 @@ inline static void Game(void)
 			EraseTetromino(&current);
 
 			--current.index.y;
-		}
+		} while (CheckTetromino(&current));
 
 		SaveGrid();
 		SetTetrominoNull(&current);
 		
+
+	Print:
 		// PrintGrid also checks for complete rows
 		// It would be ugly  so I didn't rename it
 		// The  functionality   is baked into  the 
 		// function
-
-	Print:
 		if (PrintGrid())
 		{
 			EraseGrid();
@@ -768,7 +778,6 @@ inline static void Game(void)
 		}
 	}
 
-	printf(ESC DEFAULT);
 	GetAnyInput();
 }
 
@@ -1269,5 +1278,17 @@ inline static void UpdateScore(void)
 	case 4:
 		score += 120;
 		break;
+	}
+}
+
+inline static void EraseNextTetromino(void)
+{
+	for (int i = 0; i < next.dimensions.y; i++)
+	{
+		Goto((cordinates) { padding.x + 2 + ((GAME_WIDTH * 2) + 3) + (13 - next.dimensions.x), padding.y + SCREEN_HEIGHT - 3 + i });
+		for (int j = 0; j < next.dimensions.x; j++)
+		{
+			printf("  ");
+		}
 	}
 }
