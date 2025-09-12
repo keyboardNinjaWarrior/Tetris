@@ -75,6 +75,7 @@ struct Grid
 typedef struct Grid Grid;
 
 short int complete_rows[4] = { -1,-1,-1,-1 };
+int score = 0;
 
 // functions
 static void GetAnyInput							(void);
@@ -1216,7 +1217,7 @@ inline static void RemoveCompleteRows(void)
 		{
 			if (grid[i][k].pixel)	row = true;
 			
-			if (i + difference <= GAME_HEIGHT + 1)
+			if (i + difference < GAME_HEIGHT + 2)
 			{
 				grid[i][k] = grid[i + difference][k];
 			}
@@ -1242,5 +1243,31 @@ inline static void EraseGrid(void)
 				printf("  ");
 			}
 		}
+	}
+}
+
+inline static void UpdateScore(void)
+{
+	short int i;
+	for (i = 0; i < 4 && complete_rows[i] != -1; i++)
+		;
+
+	switch (i)
+	{
+	case 1:
+		score += 4;
+		break;
+
+	case 2:
+		score += 10;
+		break;
+
+	case 3:
+		score += 30;
+		break;
+
+	case 4:
+		score += 120;
+		break;
 	}
 }
