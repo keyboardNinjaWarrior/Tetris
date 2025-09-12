@@ -85,7 +85,6 @@ static void EraseTetromino						(struct Tetromino*);
 inline static bool PrintGrid					(void);
 inline static void Game							(void);
 inline static void SaveGrid						(void);
-inline static void EraseGrid					(void);
 inline static void ExitTetris					(void);
 inline static void PrintScore					(void);
 inline static void UpdateScore					(void);
@@ -116,7 +115,7 @@ inline static void Goto							(struct cordinates);
 inline static void WriteOnScreen				(char[SCREEN_WIDTH], cordinates);
 inline static unsigned short int RandomIndex	(void);
 
-// inline static int PowerOfTen					(int)
+// inline static int PowerOfTen					(int);
 
 int main(void)
 {
@@ -771,8 +770,6 @@ inline static void Game(void)
 		SaveGrid();
 		SetTetrominoNull(&current);
 		
-
-	Print:
 		// PrintGrid also checks for complete rows
 		// It would be ugly  so I didn't rename it
 		// The  functionality   is baked into  the 
@@ -781,9 +778,7 @@ inline static void Game(void)
 		{
 			UpdateScore();
 			PrintScore();
-			EraseGrid();
 			RemoveCompleteRows();
-			goto Print;
 		}
 	}
 
@@ -1243,24 +1238,20 @@ inline static void RemoveCompleteRows(void)
 			{
 				grid[i][k] = (Grid){ false, EMPTY };
 			}
-		}
 
-		if (!row)	break;
-	}
-}
-
-inline static void EraseGrid(void)
-{
-	for (int i = 0; i < GAME_HEIGHT; i++)
-	{
-		for (int j = 0; j < GAME_WIDTH; j++)
-		{
-			if (grid[i][j].pixel)
+			Goto((cordinates) { padding.x + 2 + (k * 2), padding.y + (GAME_HEIGHT - 1) - i });
+			if (grid[i][k].pixel)
 			{
-				Goto((cordinates) { padding.x + 2 + (j * 2), padding.y + (GAME_HEIGHT - 1) - i });
+				SetColor(&grid[i][k].color);
+				printf("[]");
+			}
+			else
+			{
 				printf("  ");
 			}
 		}
+
+		if (!row)	break;
 	}
 }
 
