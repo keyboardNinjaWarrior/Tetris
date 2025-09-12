@@ -116,6 +116,8 @@ inline static void Goto							(struct cordinates);
 inline static void WriteOnScreen				(char[SCREEN_WIDTH], cordinates);
 inline static unsigned short int RandomIndex	(void);
 
+// inline static int PowerOfTen					(int)
+
 int main(void)
 {
 	// meta
