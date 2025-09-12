@@ -87,6 +87,8 @@ inline static void Game							(void);
 inline static void SaveGrid						(void);
 inline static void EraseGrid					(void);
 inline static void ExitTetris					(void);
+inline static void PrintScore					(void);
+inline static void UpdateScore					(void);
 inline static void WaitForInput					(void);
 inline static void SetGameScreen				(void);
 inline static void SetEmptyScreen				(void);
@@ -334,6 +336,9 @@ inline static void SetGameScreen(void)
 
 	WriteOnScreen("Score", (cordinates) { width + 9, 1 });
 	WriteOnScreen("Upcoming", (cordinates) { width + 8, SCREEN_HEIGHT - 5 });
+
+	WriteOnScreen("0", (cordinates) {2 + (GAME_WIDTH * 2) + 2 + 13, 3 });
+
 }
 
 inline static void SetTetrominoI(struct Tetromino* tetromino)
@@ -772,6 +777,8 @@ inline static void Game(void)
 		// function
 		if (PrintGrid())
 		{
+			UpdateScore();
+			PrintScore();
 			EraseGrid();
 			RemoveCompleteRows();
 			goto Print;
@@ -1291,4 +1298,20 @@ inline static void EraseNextTetromino(void)
 			printf("  ");
 		}
 	}
+}
+
+inline static int PowerOfTen(int times)
+{
+	int power = 10;
+	for (; times != 1; power *= 10, times--);
+	return power;
+}
+
+inline static void PrintScore(void)
+{
+	static int length = 1;
+	for (; score / PowerOfTen(length) != 0; length++);
+
+	Goto((cordinates) { padding.x + 2 + (GAME_WIDTH * 2) + 2 + (13 - length / 2), padding.y + 3 });
+	printf(ESC DEFAULT "%d", score);
 }
