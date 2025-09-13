@@ -86,9 +86,9 @@ static void PrintTetromino						(struct Tetromino*);
 static void EraseTetromino						(struct Tetromino*);
 inline static bool PrintGrid					(void);
 inline static void Game							(void);
+inline static void GameOver						(void);
 inline static void SaveGrid						(void);
 inline static void ExitTetris					(void);
-inline static void PrintScore					(void);
 inline static void UpdateScore					(void);
 inline static void WaitForInput					(void);
 inline static void SetGameScreen				(void);
@@ -103,6 +103,7 @@ inline static void SetNewScreenBuffer			(void);
 inline static void GetConsoleDimensions			(void);
 inline static void RotateCounterclockwise		(void);
 inline static void SetWindowsTitle				(char*);
+inline static void PrintScore					(cordinates);
 inline static void SetColor						(enum type*);
 inline static void SetTetrominoI				(struct Tetromino*);
 inline static void SetTetrominoT				(struct Tetromino*);
@@ -140,6 +141,8 @@ int main(void)
 	SetEmptyScreen();
 	SetGameScreen();
 	Game();
+	GameOver();
+
 	ExitTetris();
 
 	return 0;
@@ -909,7 +912,7 @@ inline static void Game(void)
 		if (PrintGrid())
 		{
 			UpdateScore();
-			PrintScore();
+			PrintScore((cordinates) { 2 + (GAME_WIDTH * 2) + 2 + 13, 3});
 			RemoveCompleteRows();
 		}
 	}
@@ -1432,11 +1435,41 @@ inline static int PowerOfTen(int times)
 	return power;
 }
 
-inline static void PrintScore(void)
+inline static void PrintScore(cordinates index)
 {
 	static int length = 1;
 	for (; score / PowerOfTen(length) != 0; length++);
-
-	Goto((cordinates) { padding.x + 2 + (GAME_WIDTH * 2) + 2 + (13 - length / 2), padding.y + 3 });
+	
+	Goto((cordinates) { padding.x + index.x - length / 2, padding.y + index.y });
+	//Goto((cordinates) { padding.x + 2 + (GAME_WIDTH * 2) + 2 + (13 - length / 2), padding.y + 3 });
 	printf(ESC DEFAULT "%d", score);
 }
+
+inline static void GameOver(void)
+{
+	printf(ESC DEFAULT ESC DRAW);
+
+	WriteOnScreen(DASH, (cordinates) { 2 + (GAME_WIDTH * 2) + 2, -1 });
+	WriteOnScreen(DASH, (cordinates) { 2 + (GAME_WIDTH * 2) + 2, SCREEN_HEIGHT });
+	WriteOnScreen(PIPE, (cordinates) { SCREEN_WIDTH, 5 });
+	WriteOnScreen(PIPE, (cordinates) { SCREEN_WIDTH , 15 });
+
+	printf(ESC ASCII);
+
+	SetEmptyScreen();
+	
+
+	WriteOnScreen("  ________   __  _______ ____ _   _________  __"		, (cordinates) { 2, 7 + 0 });
+	WriteOnScreen(" / ___/ _ | /  |/  / __// __ \\ | / / __/ _ \\/ /"	, (cordinates) { 2, 7 + 1 });
+	WriteOnScreen("/ (_ / __ |/ /|_/ / _/ / /_/ / |/ / _// , _/_/"		, (cordinates) { 2, 7 + 2 });
+	WriteOnScreen("\\___/_/ |_/_/  /_/___/ \\____/|___/___/_/|_(_)"		, (cordinates) { 2, 7 + 3 });
+
+	WriteOnScreen("Your Score", (cordinates) { 20, 7 + 5 });
+	
+	PrintScore((cordinates) { SCREEN_WIDTH / 2, 7 + 7 });
+	
+	GetAnyInput(); 
+}
+
+// 1. sounds
+// 2. signal handling
