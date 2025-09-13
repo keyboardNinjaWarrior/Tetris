@@ -342,8 +342,13 @@ inline static void SetGameScreen(void)
 
 	WriteOnScreen("0", (cordinates) {2 + (GAME_WIDTH * 2) + 2 + 13, 3 });
 	
-	_setmode(_fileno(stdout), _O_U16TEXT);
-	
+	if (_setmode(_fileno(stdout), _O_U16TEXT) == -1)
+	{
+		// bad error handling ...
+		// think of something else ...
+		fprintf(stderr, "\n" "Unable to change the mode" "\n");
+	}
+
 	wprintf	( 
 			 ESC "[%d;%dH" L"⣿⣸⢸⣼⡟⣿⣉⢿⢸⡼⣞⢿⣿⣿⣞⣷⡽⢿⡾⣿⢾⣇⣿⢹⣧⢿"	\
 			 ESC "[%d;%dH" L"⣇⣿⡇⣿⣧⢣⣿⠮⡋⠿⣮⣐⢽⣻⠿⠜⡿⠷⡅⢣⡜⣿⢹⢸⣿⡜"	\
@@ -366,7 +371,12 @@ inline static void SetGameScreen(void)
 			 padding.y + 14, padding.x + 2 + (GAME_WIDTH * 2) + 3
 			);
 
-	_setmode(_fileno(stdout), _O_TEXT);
+	if (_setmode(_fileno(stdout), _O_TEXT) == -1)
+	{
+		// bad error handling ...
+		// think of something else ...
+		fprintf(stderr, "\n" "Unable to change the mode" "\n");
+	}
 }
 
 inline static void SetTetrominoI(struct Tetromino* tetromino)
