@@ -1470,6 +1470,3 @@ inline static void GameOver(void)
 	
 	GetAnyInput(); 
 }
-
-// 1. sounds
-// 2. signal handling
