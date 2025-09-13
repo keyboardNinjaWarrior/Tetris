@@ -1,5 +1,7 @@
-﻿#include <time.h>
+﻿#include <io.h>
+#include <time.h>
 #include <stdio.h>
+#include <fcntl.h>
 #include <conio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -11,7 +13,7 @@
 #define	GAME_WIDTH			10
 #define TETROMINO_HEIGHT	2
 #define TETROMINO_WIDTH		4
-#define TIME				2
+#define TIME				1.5
 
 // escape sequences
 #define ESC					"\x1b"
@@ -339,7 +341,32 @@ inline static void SetGameScreen(void)
 	WriteOnScreen("Upcoming", (cordinates) { width + 8, SCREEN_HEIGHT - 5 });
 
 	WriteOnScreen("0", (cordinates) {2 + (GAME_WIDTH * 2) + 2 + 13, 3 });
+	
+	_setmode(_fileno(stdout), _O_U16TEXT);
+	
+	wprintf	( 
+			 ESC "[%d;%dH" L"⣿⣸⢸⣼⡟⣿⣉⢿⢸⡼⣞⢿⣿⣿⣞⣷⡽⢿⡾⣿⢾⣇⣿⢹⣧⢿"	\
+			 ESC "[%d;%dH" L"⣇⣿⡇⣿⣧⢣⣿⠮⡋⠿⣮⣐⢽⣻⠿⠜⡿⠷⡅⢣⡜⣿⢹⢸⣿⡜"	\
+			 ESC "[%d;%dH" L"⣸⣿⡇⣿⢨⠏⢀⢄⣀⢌⢺⣿⣿⣿⣿⣷⢊⣀⣀⢄⠈⢞⢸⢸⣿⡇"	\
+			 ESC "[%d;%dH" L"⣿⣿⢹⢻⠘⢰⣇⡟⡍⡇⣾⣿⣿⣿⣿⣯⡦⡏⣽⡞⣧⠸⢸⣼⣿⣿"	\
+			 ESC "[%d;%dH" L"⣿⣿⡏⡾⢸⣸⣏⠿⡾⢣⣿⣿⣿⣿⣿⣿⣧⠿⠾⣳⣿⣼⣏⣿⣿⣿"	\
+			 ESC "[%d;%dH" L"⣿⣿⣿⡵⠛⣿⣿⣛⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣛⣻⣿⡇⣼⣿⣿⣿"	\
+			 ESC "[%d;%dH" L"⣿⣿⣿⣷⡀⢿⣿⣿⣿⣿⣿⣿⡿⢿⣿⣿⣿⣿⣿⣿⡿⣰⣿⣿⣿⣿"	\
+			 ESC "[%d;%dH" L"⢿⣿⣿⣿⣿⡜⣿⣿⣿⣿⣿⣿⣾⣿⣼⣿⣿⣿⣿⡿⣱⣿⣿⣿⣿⣿"	\
+			 ESC "[%d;%dH" L"⡼⣿⣿⣿⣿⢰⡍⡛⡿⢿⣿⣿⣿⣿⣿⡿⠟⣻⢥⣿⣿⣿⣿⣿⣿⠁",	\
 
+			 padding.y +  6, padding.x + 2 + (GAME_WIDTH * 2) + 3,
+			 padding.y +  7, padding.x + 2 + (GAME_WIDTH * 2) + 3,
+			 padding.y +  8, padding.x + 2 + (GAME_WIDTH * 2) + 3,
+			 padding.y +  9, padding.x + 2 + (GAME_WIDTH * 2) + 3,
+			 padding.y + 10, padding.x + 2 + (GAME_WIDTH * 2) + 3,
+			 padding.y + 11, padding.x + 2 + (GAME_WIDTH * 2) + 3,
+			 padding.y + 12, padding.x + 2 + (GAME_WIDTH * 2) + 3,
+			 padding.y + 13, padding.x + 2 + (GAME_WIDTH * 2) + 3,
+			 padding.y + 14, padding.x + 2 + (GAME_WIDTH * 2) + 3
+			);
+
+	_setmode(_fileno(stdout), _O_TEXT);
 }
 
 inline static void SetTetrominoI(struct Tetromino* tetromino)
@@ -543,6 +570,101 @@ inline static void SetTetrominoO(struct Tetromino* tetromino)
 	tetromino->dimensions.x = 2;
 	tetromino->dimensions.y = 2;
 	tetromino->angle = ZERO;
+
+	tetromino->clockwise_offset[ZERO][0].x = 0;
+	tetromino->clockwise_offset[ZERO][0].y = 0;
+	tetromino->clockwise_offset[ZERO][1].x = 0;
+	tetromino->clockwise_offset[ZERO][1].y = 0;
+	tetromino->clockwise_offset[ZERO][2].x = 0;
+	tetromino->clockwise_offset[ZERO][2].y = 0;
+	tetromino->clockwise_offset[ZERO][3].x = 0;
+	tetromino->clockwise_offset[ZERO][3].y = 0;
+	tetromino->clockwise_offset[ZERO][4].x = 0;
+	tetromino->clockwise_offset[ZERO][4].y = 0;
+
+	// from 0 to 90
+	tetromino->anticlockwise_offset[ZERO][0].x = 0;
+	tetromino->anticlockwise_offset[ZERO][0].y = 0;
+	tetromino->anticlockwise_offset[ZERO][1].x = 0;
+	tetromino->anticlockwise_offset[ZERO][1].y = 0;
+	tetromino->anticlockwise_offset[ZERO][2].x = 0;
+	tetromino->anticlockwise_offset[ZERO][2].y = 0;
+	tetromino->anticlockwise_offset[ZERO][3].x = 0;
+	tetromino->anticlockwise_offset[ZERO][3].y = 0;
+	tetromino->anticlockwise_offset[ZERO][4].x = 0;
+	tetromino->anticlockwise_offset[ZERO][4].y = 0;
+
+	// from 90 to 0
+	tetromino->clockwise_offset[NINETY][0].x = 0;
+	tetromino->clockwise_offset[NINETY][0].y = 0;
+	tetromino->clockwise_offset[NINETY][1].x = 0;
+	tetromino->clockwise_offset[NINETY][1].y = 0;
+	tetromino->clockwise_offset[NINETY][2].x = 0;
+	tetromino->clockwise_offset[NINETY][2].y = 0;
+	tetromino->clockwise_offset[NINETY][3].x = 0;
+	tetromino->clockwise_offset[NINETY][3].y = 0;
+	tetromino->clockwise_offset[NINETY][4].x = 0;
+	tetromino->clockwise_offset[NINETY][4].y = 0;
+
+	// from 90 to 180
+	tetromino->anticlockwise_offset[NINETY][0].x = 0;
+	tetromino->anticlockwise_offset[NINETY][0].y = 0;
+	tetromino->anticlockwise_offset[NINETY][1].x = 0;
+	tetromino->anticlockwise_offset[NINETY][1].y = 0;
+	tetromino->anticlockwise_offset[NINETY][2].x = 0;
+	tetromino->anticlockwise_offset[NINETY][2].y = 0;
+	tetromino->anticlockwise_offset[NINETY][3].x = 0;
+	tetromino->anticlockwise_offset[NINETY][3].y = 0;
+	tetromino->anticlockwise_offset[NINETY][4].x = 0;
+	tetromino->anticlockwise_offset[NINETY][4].y = 0;
+
+	// from 180 to 90
+	tetromino->clockwise_offset[ONE_EIGHTY][0].x = 0;
+	tetromino->clockwise_offset[ONE_EIGHTY][0].y = 0;
+	tetromino->clockwise_offset[ONE_EIGHTY][1].x = 0;
+	tetromino->clockwise_offset[ONE_EIGHTY][1].y = 0;
+	tetromino->clockwise_offset[ONE_EIGHTY][2].x = 0;
+	tetromino->clockwise_offset[ONE_EIGHTY][2].y = 0;
+	tetromino->clockwise_offset[ONE_EIGHTY][3].x = 0;
+	tetromino->clockwise_offset[ONE_EIGHTY][3].y = 0;
+	tetromino->clockwise_offset[ONE_EIGHTY][4].x = 0;
+	tetromino->clockwise_offset[ONE_EIGHTY][4].y = 0;
+
+	// from 180 to 270
+	tetromino->anticlockwise_offset[ONE_EIGHTY][0].x = 0;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][0].y = 0;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][1].x = 0;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][1].y = 0;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][2].x = 0;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][2].y = 0;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][3].x = 0;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][3].y = 0;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][4].x = 0;
+	tetromino->anticlockwise_offset[ONE_EIGHTY][4].y = 0;
+
+	// from 270 to 180
+	tetromino->clockwise_offset[TWO_SEVENTTY][0].x = 0;
+	tetromino->clockwise_offset[TWO_SEVENTTY][0].y = 0;
+	tetromino->clockwise_offset[TWO_SEVENTTY][1].x = 0;
+	tetromino->clockwise_offset[TWO_SEVENTTY][1].y = 0;
+	tetromino->clockwise_offset[TWO_SEVENTTY][2].x = 0;
+	tetromino->clockwise_offset[TWO_SEVENTTY][2].y = 0;
+	tetromino->clockwise_offset[TWO_SEVENTTY][3].x = 0;
+	tetromino->clockwise_offset[TWO_SEVENTTY][3].y = 0;
+	tetromino->clockwise_offset[TWO_SEVENTTY][4].x = 0;
+	tetromino->clockwise_offset[TWO_SEVENTTY][4].y = 0;
+
+	// from 270 to 0
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].x = 0;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][0].y = 0;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][1].x = 0;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][1].y = 0;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][2].x = 0;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][2].y = 0;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].x = 0;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][3].y = 0;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].x = 0;
+	tetromino->anticlockwise_offset[TWO_SEVENTTY][4].y = 0;
 }
 
 inline static void SetTetrominoNull(struct Tetromino* tetromino)
