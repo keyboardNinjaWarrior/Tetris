@@ -42,7 +42,7 @@
 #define ORANGE				"[38;2;255;165;0m"
 #define GREEN				"[38;2;0;255;0m"
 #define RED					"[38;2;255;0;0m"
-#define GREY				"[38;2;128;128;128m"
+#define GREY				"[38;2;59;59;59m"
 #define DEFAULT				"[0m"
 
 struct cordinates
@@ -915,8 +915,6 @@ inline static void Game(void)
 			RemoveCompleteRows();
 		}
 	}
-
-	GetAnyInput();
 }
 
 static void PrintTetromino(struct Tetromino* tetromino)
