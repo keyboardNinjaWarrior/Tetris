@@ -28,10 +28,10 @@ Clear the row by completing it and avoid filling the board.
 Enjoy! :smiley:
 
 # Future Objectives
-- [] Make it portable
-- [] Add sounds
-- [] Add signals
-- [] Do good error handling
-- [] Manage the project in multiple files
-- [] Store graphics in file
-- [] Add levels
+- [ ] Make it portable
+- [ ] Add sounds
+- [ ] Add signals
+- [ ] Do good error handling
+- [ ] Manage the project in multiple files
+- [ ] Store graphics in file
+- [ ] Add levels
