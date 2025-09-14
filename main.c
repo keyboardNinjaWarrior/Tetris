@@ -1440,7 +1440,6 @@ inline static void PrintScore(cordinates index)
 	for (; score / PowerOfTen(length) != 0; length++);
 	
 	Goto((cordinates) { padding.x + index.x - length / 2, padding.y + index.y });
-	//Goto((cordinates) { padding.x + 2 + (GAME_WIDTH * 2) + 2 + (13 - length / 2), padding.y + 3 });
 	printf(ESC DEFAULT "%d", score);
 }
 
