@@ -1,5 +1,5 @@
 # About
-This project started with collaboration with [Code;Gate](https://github.com/rayanjamshaid). Since, it was my first time using Visual Studio, I messed up and have to delete and reupload by Git three times. So, many thanks goes to him for the inception of idea and showing me the possibility of creating tetris in terminal.
+This project started with collaboration with [Code;Gate](https://github.com/rayanjamshaid). Since, it was my first time using Visual Studio, I messed up and have to delete and reupload by Git three times. So, many thanks goes to him for the inception of idea and showing me the possibility of creating tetris in terminal. I would also thank [C Community](https://discord.gg/KydfXPfpYK) on Discord. They helped me where I got stuck.
 
 <br>
 
