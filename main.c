@@ -171,7 +171,6 @@ inline static void ExitTetris(void)
 {
 	printf(ESC MAIN);							  // restores to the main buffer
 	printf(ESC CUR_SHOW);						  // show cursor
-	printf(ESC DEFAULT);
 }
 
 inline static void GetConsoleDimensions(void)
