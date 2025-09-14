@@ -10,9 +10,9 @@ This project started with collaboration with [Code;Gate](https://github.com/raya
 It's a memory efficient project. The board is drawn by the program and there are few tetrominos which are intialized by the function. The project started as drawing the board and tetrominos. Then, I restarted from implemented the intial screen. I came up with other approch for it which I failed to implement, but I discovered refactoring. I have also implemented [Super Rotation System](https://tetris.fandom.com/wiki/Super_Rotation_System). As I have invested my time on it, I kept the scoring simple. 
 
 # Requirements
-- **Windows**
+- **Windows:**
 You must have Windows. The program is currently not portable.
-- **Terminal**
+- **Terminal:**
 You must not have terminal phobia.
 
 # Instructions
