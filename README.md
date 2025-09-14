@@ -1,13 +1,12 @@
-# About
-This project started with collaboration with [Code;Gate](https://github.com/rayanjamshaid). Since, it was my first time using Visual Studio, I messed up and have to delete and reupload by Git three times. So, many thanks goes to him for the inception of idea and showing me the possibility of creating tetris in terminal. I would also thank [C Community](https://discord.gg/KydfXPfpYK) on Discord. They helped me where I got stuck.
+# Overview
+It's a Tetris that runs in terminal. It is fully coded in C with full implementation of [Super Rotation System](https://tetris.fandom.com/wiki/Super_Rotation_System), simple scoring mechanism and text-based user interferance.  
+
+# Credits
+This project started was inspired by and collaborated with [Code;Gate](https://github.com/rayanjamshaid). So, many thanks goes to him for the inception of this idea and showing me the possibility of creating tetris with in terminal as shown bellow. I would also thank [C Community](https://discord.gg/KydfXPfpYK) on Discord as they helped and provided a collective support for this project.
 
 <br>
 
 ![The first version of Tetris, completed in 1985, run on an emulator of the Elektronika 60](https://upload.wikimedia.org/wikipedia/en/7/7c/Tetris-VeryFirstVersion.png)
-
-<br>
-
-It's a memory efficient project. The board is drawn by the program and there are few tetrominos which are intialized by the function. The project started as drawing the board and tetrominos. Then, I restarted from implemented the intial screen. I came up with other approch for it which I failed to implement, but I discovered refactoring. I have also implemented [Super Rotation System](https://tetris.fandom.com/wiki/Super_Rotation_System). As I have invested my time on it, I kept the scoring simple. 
 
 # Requirements
 - **Windows:**
@@ -23,8 +22,8 @@ You must not have terminal phobia.
 - Press `↓` to soft drop
     
 <br>
-    
 Clear the row by completing it and avoid filling the board.
+<br>
 Enjoy! :smiley:
 
 # Future Objectives
